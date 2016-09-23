@@ -31,19 +31,19 @@ The neural network has 3 layers.
 
 
 #include <stdlib.h>
-/*
+
 #include "opencv2/opencv.hpp"
 #include "opencv2/ml/ml.hpp"
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
-*/
+
 #include <stdio.h>
 #include <string.h>
 #include <fstream>
 #include <iostream>
 
 using namespace std;
-//using namespace cv;
+using namespace cv;
 
 
 #define VARIABLE 10
@@ -96,7 +96,30 @@ int main(int argc, char** argv)
 	int lastRead = -1;	// maybe we dont know which character is lastRead, make a vector with all characters?
 	int currRead = -1;
 
+	VideoCapture cap(0); //default camera
+
 	cout << "Program has started.. \n";
+
+	//test if camera is opened
+	if (!cap.isOpened()) {
+		cout << "Could not open camera" << endl;
+		return -1;
+	}
+
+	while(true) {
+		Mat frame;
+		cap >> frame;
+
+		// Create window
+		namedWindow( "Display window", WINDOW_AUTOSIZE );
+
+		// Show frame
+		imshow("Display window",frame);
+
+		// Show window until user terminates
+		waitKey(1);
+	}
+	
 	cout << parOpen << ", " << lastRead << ", " << currRead << "\n";
 	if (isVariable(lastRead)) {
 		// allowed
