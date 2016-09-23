@@ -31,17 +31,19 @@ The neural network has 3 layers.
 
 
 #include <stdlib.h>
+/*
 #include "opencv2/opencv.hpp"
 #include "opencv2/ml/ml.hpp"
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
-
+*/
 #include <stdio.h>
 #include <string.h>
 #include <fstream>
+#include <iostream>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 
 #define VARIABLE 10
@@ -55,16 +57,16 @@ using namespace cv;
 #define rPARENTHESIS 17
 
 
-bool isNumber(int read) {
-	return read < VARIABLE;
+bool isNumber(int currRead) {
+	return currRead < VARIABLE;
 }
 
-bool isVariable(int read) {
-	return read == VARIABLE;
+bool isVariable(int currRead) {
+	return currRead == VARIABLE;
 }
 
-bool isOperator(int read) {
-	return (read > VARIABLE && read < lPARENTHESIS);
+bool isOperator(int currRead) {
+	return (currRead > VARIABLE && currRead < lPARENTHESIS);
 }
 
 /* Returns 
@@ -75,11 +77,11 @@ False if:
 * read = left parenthesis and bracket is open
 * read = right parenthesis and bracket is closed
 */
-bool isParenthesis(int read, bool open) {
+bool isParenthesis(int currRead, bool open) {
 	if(!open)
-		return read == lPARENTHESIS;
+		return currRead == lPARENTHESIS;
 	else
-		return read == rPARENTHESIS;
+		return currRead == rPARENTHESIS;
 
 }
 
@@ -91,38 +93,40 @@ void toggle(bool open) {
 int main(int argc, char** argv)
 {
 	bool parOpen = false;
-	int lastRead = -1;
-	int read = -1;
+	int lastRead = -1;	// maybe we dont know which character is lastRead, make a vector with all characters?
+	int currRead = -1;
 
+	cout << "Program has started.. \n";
+	cout << parOpen << ", " << lastRead << ", " << currRead << "\n";
 	if (isVariable(lastRead)) {
 		// allowed
-		isOperator, isParenthesis
+		//isOperator, isParenthesis
 
 		// disallowed
-		isNumber, isVariable
+		//isNumber, isVariable
 
 	}
 	else if(isNumber(lastRead)) {
 		// allowed for current read
-		isNumber, isOperator, isParenthesis
+		//isNumber, isOperator, isParenthesis
 
 		// disallowed
-		isVariable
+		//isVariable
 	}
 	else if(isOperator(lastRead)) {
 		// allowed for current read
-		isNumber, isVariable, isParenthesis
+		//isNumber, isVariable, isParenthesis
 
 		// disallowed
-		isOperator
+		//isOperator
 	}
 	else if(isParenthesis(lastRead, parOpen)) {
 		toggle(parOpen);
 		// allowed for current read
-		isNumber, isVariable
+		//isNumber, isVariable
 
 		// disallowed
-		isParenthesis, isOperator,
+		//isParenthesis, isOperator,
 	}
 
 
