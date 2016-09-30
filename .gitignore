@@ -1,5 +1,7 @@
+training
 output
 preprocessing
 *.o
 output
+preprocessed_output/
 .DS_Store

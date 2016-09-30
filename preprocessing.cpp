@@ -1,6 +1,7 @@
 /**************************************
 * Original code: Kristofer Janukiewicz
 * Github: https://github.com/KristoferJanukiewicz/Neural-Network-Approach-for-Optical-Character-Recognition/blob/master/Preprocessing.cpp
+* Dataset (0-9, x, y): http://www.ee.surrey.ac.uk/CVSSP/demos/chars74k/ 2016-09-28
 **************************************/
 
 #include <stdlib.h>
@@ -10,6 +11,7 @@
 #include <string.h>
 #include <fstream>
 using namespace std;
+using namespace cv;
 
 
 ////////////////////////////////////////
@@ -24,7 +26,7 @@ using namespace std;
 
 int counter = 0;
 
-void scaleDownImage(cv::Mat &originalImg, cv::Mat &scaledDownImage)
+void scaleDownImage(Mat &originalImg, Mat &scaledDownImage)
 {
 	for (int x = 0; x<ATTRIBUTES; x++)
 	{
@@ -38,7 +40,7 @@ void scaleDownImage(cv::Mat &originalImg, cv::Mat &scaledDownImage)
 	}
 }
 
-void cropImage(cv::Mat &originalImage, cv::Mat &croppedImage)
+void cropImage(Mat &originalImage, Mat &croppedImage)
 {
 	int row = originalImage.rows;
 	int col = originalImage.cols;
@@ -131,7 +133,7 @@ void cropImage(cv::Mat &originalImage, cv::Mat &croppedImage)
 	}
 	int width = brx - tlx;
 	int height = bry - tly;
-	cv::Mat crop(originalImage, cv::Rect(tlx, tly, brx - tlx, bry - tly));
+	Mat crop(originalImage, Rect(tlx, tly, brx - tlx, bry - tly));
 	if (width == 0 || height == 0){
 		croppedImage = originalImage.clone();
 	}
@@ -140,7 +142,7 @@ void cropImage(cv::Mat &originalImage, cv::Mat &croppedImage)
 	}	
 }
 
-void convertToPixelValueArray(cv::Mat &img, int pixelarray[])
+void convertToPixelValueArray(Mat &img, int pixelarray[])
 {
 	int i = 0;
 	for (int x = 0; x<ATTRIBUTES; x++)
@@ -164,8 +166,8 @@ string convertInt(int number)
 void readFile(std::string datasetPath, int samplesPerClass, std::string outputfile)
 {
 	fstream file(outputfile, ios::out);
-	string folderName[CLASSES] = {"y", "times", "division", "plus", "equals", "minus", "0", "1", 
-								"2", "3", "4", "5", "6", "7", "8", "9"};
+	string folderName[CLASSES] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+								"y", "equals", "plus", "minus", "times", "division"};
 
 	for (int sample = 1; sample <= samplesPerClass; sample++)
 	{
@@ -175,16 +177,16 @@ void readFile(std::string datasetPath, int samplesPerClass, std::string outputfi
 			//std::cout << "imagePath: " << imagePath << std::endl;
 			//reading the image
 			
-			cv::Mat img = cv::imread(imagePath, 0);
+			Mat img = imread(imagePath, 0);
 
-			cv::Mat output;
+			Mat output;
 			//Applying gaussian blur to remove any noise
-			cv::GaussianBlur(img, output, cv::Size(5, 5), 0);
+			GaussianBlur(img, output, Size(5, 5), 0);
 			//thresholding to get a binary image
-			cv::threshold(output, output, 50, 255, 0);
+			threshold(output, output, 50, 255, 0);
 			
 			//declaring mat to hold the scaled down image
-			cv::Mat scaledDownImage(ATTRIBUTES, ATTRIBUTES, CV_8U, cv::Scalar(0));
+			Mat scaledDownImage(ATTRIBUTES, ATTRIBUTES, CV_8U, Scalar(0));
 			//declaring array to hold the pixel values in the memory before it written into file
 			int pixelValueArray[ATTRIBUTES*ATTRIBUTES];
 
@@ -210,10 +212,10 @@ void readFile(std::string datasetPath, int samplesPerClass, std::string outputfi
 
 int main()
 {
-	cout << "Reading the training set......\n";
+	cout << "Reading the training set...\n";
 	readFile(INPUT_PATH, TRAINING_SAMPLES, OUTPUT_PATH_TRAINING);
-	cout << "Reading the test set.........\n";
+	cout << "Reading the test set...\n";
 	readFile(INPUT_PATH, TEST_SAMPLES, OUTPUT_PATH_TESTING);
-	cout << "operation completed";
+	cout << "operation completed\n";
 	return 0;
 }
