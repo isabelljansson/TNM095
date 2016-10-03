@@ -1,7 +1,8 @@
 
 CXXFLAGS = -c -I/usr/local/include/
 
-LFLAGS= -L/usr/local/lib/ -lm -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml -lopencv_video -lopencv_videoio
+LFLAGS= -L/usr/local/lib/ 
+#-lm -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml -lopencv_video -lopencv_videoio
 
 all: output 
 
