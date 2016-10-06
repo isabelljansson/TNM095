@@ -163,7 +163,7 @@ string convertInt(int number)
 	return ss.str();//return a string with the contents of the stream
 }
 
-void readFile(std::string datasetPath, int samplesPerClass, std::string outputfile)
+void readFile(string datasetPath, int samplesPerClass, string outputfile)
 {
 	fstream file(outputfile, ios::out);
 	string folderName[CLASSES] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
@@ -173,8 +173,8 @@ void readFile(std::string datasetPath, int samplesPerClass, std::string outputfi
 	{
 		for (int folder = 0; folder < CLASSES; folder++)
 		{   //creating the file path string
-			std::string imagePath = datasetPath + "/" + folderName[folder] + "/img" +  convertInt(sample) + ".png";
-			//std::cout << "imagePath: " << imagePath << std::endl;
+			string imagePath = datasetPath + "/" + folderName[folder] + "/img" +  convertInt(sample) + ".png";
+			//cout << "imagePath: " << imagePath << endl;
 			//reading the image
 			
 			Mat img = imread(imagePath, 0);

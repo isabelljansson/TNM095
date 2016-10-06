@@ -1,12 +1,12 @@
 
-CXXFLAGS = -c -I/usr/local/include/
+CXXFLAGS = -c  -I/usr/local/include/ -I/usr/local/Cellar/opencv3/HEAD/include/
 
-LFLAGS= -L/usr/local/lib/ -lm -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml -lopencv_video -lopencv_videoio -lopencv_imgcodecs
+LFLAGS= -L/usr/local/lib/ -L/usr/local/Cellar/opencv3/HEAD/lib/ -lm -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml -lopencv_video -lopencv_videoio -lopencv_imgcodecs
 
 all: output preprocessing training
 
 clean:
-	-$(RM) *.o output 
+	-$(RM) *.o output training
 
 output: main.o
 	g++ -o $@ main.o $(LFLAGS)

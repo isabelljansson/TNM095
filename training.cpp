@@ -21,7 +21,7 @@ CLASSES
 */
 
 #include "opencv2/opencv.hpp"
-#include "opencv2/ml/ml.hpp"
+#include "opencv2/ml.hpp"
 
 #include <stdio.h>
 #include <fstream>
@@ -90,6 +90,7 @@ void read_dataset(char *filename, cv::Mat &data, cv::Mat &classes, int total_sam
 
 int main()
 {
+	//cout << "info opencv\n" << getBuildInformation() << endl;
 	cout << "Training started..\n";
 
 	// Create matrices
@@ -104,18 +105,32 @@ int main()
 	
 	// Intitialize the three layers
 	Mat layers(3, 1, CV_32S); //3 rows, 1 col, 32 bit signed ints
-	layers.at<int>(0, 0) = ALL_ATTRIBUTES;//input layer, 256 neurons
-	layers.at<int>(1, 0) = ATTRIBUTES;//hidden layer, 16 neurons
-	layers.at<int>(2, 0) = CLASSES;//output layer, 16 neurons
+	layers.row(0) = Scalar(ALL_ATTRIBUTES);
+	layers.row(1) = Scalar(ATTRIBUTES);
+	layers.row(2) = Scalar(CLASSES);
+	//layers.at<int>(0, 0) = ALL_ATTRIBUTES;//input layer, 256 neurons
+	//layers.at<int>(1, 0) = ATTRIBUTES;//hidden layer, 16 neurons
+	//layers.at<int>(2, 0) = CLASSES;//output layer, 16 neurons
 
 	// Create network
 	// See http://docs.opencv.org/2.4/modules/ml/doc/neural_networks.html for more info
 	// Activation function: Sigmoid function (default) with parameters a and b
 	// a: 0.6
 	// b: 1.0
-	//ANN_MLP nnetwork;
-	//nnetwork->create(layers, cv::ml::ANN_MLP::SIGMOID_SYM, 0.6, 1.0);
+	Ptr<ANN_MLP> nnetwork = ANN_MLP::create();
+	nnetwork->setLayerSizes(layers);
 
+	/*ANN_MLP::Params params = ANN_MLP::Params::Params(layers, ANN_MLP::SIGMOID_SYM, 1, 1, 
+			TermCriteria( TermCriteria::MAX_ITER + TermCriteria::EPS, 1000, 0.01 ), 
+			ANN_MLP::Params::BACKPROP, 0.1, 0.1);*/
+
+	//nnetwork->StatModel::train(training_set, params);
+
+
+	nnetwork->setActivationFunction(ANN_MLP::SIGMOID_SYM, 1, 1);
+	
+
+	
 	//Find weights w and biases b that minimazes the cost function
 
 
