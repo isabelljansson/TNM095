@@ -12,7 +12,7 @@
 /*
 The neural network has 3 layers.
 - one input node per attribute in a sample so 256 input nodes
-- 16 hidden nodes
+- 16 hidden nodes (3 hidden nodes?)
 - 16 output node, one for each class.
 
 
@@ -32,10 +32,12 @@ The neural network has 3 layers.
 
 #include <stdlib.h>
 
+/*
 #include "opencv2/opencv.hpp"
 #include "opencv2/ml/ml.hpp"
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
+*/
 
 #include <stdio.h>
 #include <string.h>
@@ -45,9 +47,10 @@ The neural network has 3 layers.
 #include <stack>
 #include <vector>
 #include <math.h>
+#include <algorithm>
 
 using namespace std;
-using namespace cv;
+//using namespace cv;
 
 
 #define VARIABLE 10
@@ -60,52 +63,30 @@ using namespace cv;
 #define lPARENTHESIS 16
 #define rPARENTHESIS 17
 
-void Convert(const string & Infix, string & Postfix);
-bool IsOperand(char ch);
-bool TakesPrecedence(char OperatorA, char OperatorB);
- 
-/*My functions I've added*/
-string Change_me(string);
-string Insert_comma(string);
-bool Check_valid(string);
-double Eval(string[]);
-void Next(string);
 
-bool isNumber(int currRead) {
-	return currRead < VARIABLE;
-}
-
-bool isVariable(int currRead) {
-	return currRead == VARIABLE;
-}
-
-bool isOperator(int currRead) {
-	return (currRead > VARIABLE && currRead < lPARENTHESIS);
-}
-
-/* Returns 
-True if:
-* read = left parenthesis and bracket is closed
-* read = right parenthesis and bracket is open
-False if:
-* read = left parenthesis and bracket is open
-* read = right parenthesis and bracket is closed
-*/
-bool isParenthesis(int currRead, bool open) {
-	if(!open)
-		return currRead == lPARENTHESIS;
-	else
-		return currRead == rPARENTHESIS;
-
-}
-
-void toggle(bool open) {
-	open = !open;
-}
-
-
-int main(int argc, char** argv)
+bool isOperator(char c)
 {
+	return (c == '+' || c == '-' || c == '*' || c == '/' || c == '=');
+}
+
+bool isOperator(string s)
+{
+  return (s == "+" || s == "-" || s == "*" || s == "/" || s == "=");
+}
+
+
+void convert(const string & inString, string & outString);
+bool isOperand(char c);
+bool takesPrecedence(char operatorA, char operatorB);
+bool isValid(string);
+string format(string);
+string addComma(string);
+double calc(string[]);
+string getAnswer(vector<string> array);
+void eval(string);
+
+int main(int argc, char** argv) {
+	/*
 	bool parOpen = false;
 	int lastRead = -1;	// maybe we dont know which character is lastRead, make a vector with all characters?
 	int currRead = -1;
@@ -131,414 +112,373 @@ int main(int argc, char** argv)
 		flip(frame, frame, 1); // Mirror image around the y-axis
 		imshow("Display window",frame);
 
+
 		// Show window until user terminates
 		waitKey(1);
 	}
+	*/
 
-
-	char Reply;
+	char reply;
  
-   do
-      {
-      string Infix, Postfix; // local to this loop
- 
-      cout <<"\n    Enter your expression with No spaces!\n\n";
-      cout <<"     e.g. (4+2)*3/2 "<< endl;
-      cout <<"    Unknown variables such as 'a' and 'x' are not allowed:\n\n>>";
-      cin >> Infix;
-       
-        if(Check_valid(Infix)==true)
-        {
- 
-         string temp;
-         temp = Change_me(Infix);
-         //cout<<temp;
-         //cin.get();
- 
-         Convert(temp, Postfix);
-       
-         cout << "The equivalent postfix expression is:" << endl
-         <<Insert_comma(Postfix);
- 
-         string hold;
-         hold = Insert_comma(Postfix);
-          
-         cout<<"\n\nThe answer is:";
-         Next(hold);
-  
-         cout << endl << "\nDo another (y/n)? ";
-         cin >> Reply;
-        }
-        else
-        {
-            cout<<"***Syntax error***\n";
-            cout << endl << "Do another (y/n)? ";
-            cin >> Reply;
-             
-        }       
-           
-      }while (tolower(Reply) == 'y');
+  do {
+  	string inString, outString; // local to this loop
 
-	
-	cout << parOpen << ", " << lastRead << ", " << currRead << "\n";
-	if (isVariable(lastRead)) {
-		// allowed
-		//isOperator, isParenthesis
+    cout <<"\n    Enter your expression with No spaces!\n\n";
+    cout <<"     e.g. (4+2)*3/2 "<< endl;
+    cout <<"    Unknown variables such as 'a' and 'x' are not allowed:\n\n>>";
+    cin >> inString;
 
-		// disallowed
-		//isNumber, isVariable
+		// Assume the reading of the equation is done, predicted and put into a string called inString.
+		if(isValid(inString)) {
+	      	convert(format(inString), outString);
+		    outString = addComma(outString);
 
-	}
-	else if(isNumber(lastRead)) {
-		// allowed for current read
-		//isNumber, isOperator, isParenthesis
+		    cout << "The equivalent outString expression is:" << endl << outString;
+		      
+		    cout << "\n\n The answer is: \n";
+		    eval(outString); // y = eval(outString);
 
-		// disallowed
-		//isVariable
-	}
-	else if(isOperator(lastRead)) {
-		// allowed for current read
-		//isNumber, isVariable, isParenthesis
-
-		// disallowed
-		//isOperator
-	}
-	else if(isParenthesis(lastRead, parOpen)) {
-		toggle(parOpen);
-		// allowed for current read
-		//isNumber, isVariable
-
-		// disallowed
-		//isParenthesis, isOperator,
-	}
-
-
-	// when done writing
-	if(!parOpen) {
-		// Error: Expecting closing parenthesis
-	}
+		    cout << endl << "\nDo another (y/n)? ";
+		    cin >> reply;
+		}
+		else {
+		    cout<<"*** Syntax error ***\n";
+		    cout << endl << "Do another (y/n)? ";
+		    cin >> reply;
+		     
+		}          
+  } while(tolower(reply) == 'y');
 
 }
 
-/* Given:  ch   A character.
-   Task:   To determine whether ch represents an operand (here understood
-           to be a single letter or digit).
-   Return: In the function name: true, if ch is an operand, false otherwise.
-*/
-bool IsOperand(char ch)
-{
-   if (((ch >= 'a') && (ch <= 'z')) ||
-      ((ch >= 'A') && (ch <= 'Z')) ||
-      ((ch >= '0') && (ch <= '9')))
-      return true;
-   else
-      return false;
-}
- 
- 
-/* Given:  OperatorA    A character representing an operator or parenthesis.
-           OperatorB    A character representing an operator or parenthesis.
-   Task:   To determine whether OperatorA takes precedence over OperatorB.
-   Return: In the function name: true, if OperatorA takes precedence over
-           OperatorB.
-*/
-bool TakesPrecedence(char OperatorA, char OperatorB)
-{
-   if (OperatorA == '(')
-      return false;
-   else if (OperatorB == '(')
-      return false;
-   else if (OperatorB == ')')
-      return true;
-   else if ((OperatorA == '^') && (OperatorB == '^'))
-      return false;
-   else if (OperatorA == '^')
-      return true;
-   else if (OperatorB == '^')
-      return false;
-   else if ((OperatorA == '*') || (OperatorA == '/'))
-      return true;
-   else if ((OperatorB == '*') || (OperatorB == '/'))
-      return false;
-   else
-      return true;
-       
-}
- 
-/* Given:  Infix    A string representing an infix expression (no spaces).
-   Task:   To find the postfix equivalent of this expression.
-   Return: Postfix  A string holding this postfix equivalent.
-*/
-void Convert(const string & Infix, string & Postfix)
-{
-   stack<char> OperatorStack;
-   char TopSymbol, Symbol;
-   int k;
- 
-   for (k = 0; k < Infix.size(); k++)
-      {
-      Symbol = Infix[k];
-      if (IsOperand(Symbol))
-         Postfix = Postfix + Symbol;
-      else
-         {
-         while ((! OperatorStack.empty()) &&
-            (TakesPrecedence(OperatorStack.top(), Symbol)))
-            {
-            TopSymbol = OperatorStack.top();
-            OperatorStack.pop();
-            Postfix = Postfix + TopSymbol;
-            }
-         if ((! OperatorStack.empty()) && (Symbol == ')'))
-            OperatorStack.pop();   // discard matching (
-         else
-            OperatorStack.push(Symbol);
-         }
+
+// Confirms validity of expression
+bool isValid(string myString) {
+  char lastRead = myString[0];
+  string array="0123456789y+-*/=()";
+  int count = 0, y = 0, equal = 0;
+
+  // Only valid input for first character is y, digit or -
+  if(!isdigit(lastRead) && lastRead != 'y' && lastRead != '-' && lastRead != '(') {
+    cout << "First character in expression is not allowed \n";
+  	return false;
+  }
+
+  // logic of expression
+  for(int i = 1; i < myString.length(); i++) {
+  	if(lastRead == 'y' && (myString[i] == 'y' || isdigit(myString[i]))) {
+      cout << "Last character was a letter, letter or digit is not allowed \n";
+  		return false;
+    }
+		else if(isdigit(lastRead) && myString[i] == 'y') {
+      cout << "Last character was a digit, letter is not allowed \n";
+			return false;
+    }
+		else if(isOperator(lastRead) && isOperator(myString[i])) {
+      if (myString[i] == '-')
+        continue;
+      else {
+        cout << "Can't have two operators in succession \n";
+        return false;
       }
- 
-   while (! OperatorStack.empty())
-      {
-      TopSymbol = OperatorStack.top();
-      OperatorStack.pop();
-      Postfix = Postfix + TopSymbol;
+    }
+		else if(lastRead == '(') {
+			count++;
+      if (myString[i] == '-' || myString[i] == '+') {
+        lastRead = myString[i];
+        continue;
       }
-}
-/*---------------------------------------------
-  My function needed to tokenise the expression
- 
-  --------------------------------------------*/
-       
-string Change_me(string my_string)
-{
-     
-    for(int i = 0; i <my_string.length(); i++)
-    {
-      if(isdigit(my_string[i])!=0)
-      {
-          if(isdigit(my_string[i+1])==0)
-          {  
-              my_string.insert(i+1, "v");
-              //v is just an arbitary choice
-              //it could be any other letter
-              //but it has to be a LETTER
-                  
-          }    
-      }    
+			else if(myString[i] == ')' || isOperator(myString[i])) {
+        cout << "Disallowed character after left bracket ( \n";
+				return false;
+      }
+		}
+    else if(lastRead == ')') {
+      count--;
+      if(myString[i] == '(' || isdigit(myString[i]) || myString[i] == 'y') {
+        cout << "Disallowed character after right bracket ) \n";
+        return false;
+      }
     }
-    //Changed -7*-7 case
-    for (int i = 0; i <my_string.length(); i++)
-    {
-        if(my_string[i]=='-')
-        {
-            if((my_string[i-1]!='v')&&(my_string[i-1]!=')'))
-            {
-               my_string.replace(i,1,"y"); 
-            }
-        }
-    } 
- 
-    return my_string;
-}
- 
-/*-----------------------------------------
-  My function needed to tokenise expression
-  -----------------------------------------*/
-string Insert_comma(string my_string)
-{
-    for(int i = 0; i <my_string.length(); i++)
-    {
-      if((my_string[i]=='*')||
-         (my_string[i]=='-')||
-         (my_string[i]=='/')||
-         (my_string[i]=='+')||
-         (my_string[i]=='^'))
-          {
-            my_string.insert(i+1, ",");
-            //Insert a comma after all
-            //found operators
-          } 
-           else if(my_string[i]=='v')
-           {
-              my_string.replace(i,1,",");
-              //replace the v with a comma
-              //for clarity
-           }               
-    }
-    //Changed
-    for (int i = 0; i <my_string.length(); i++)
-    {
-        if(my_string[i]=='y')
-        {
-             my_string.replace(i,1,"-");
-         }
-     }    
-    return my_string; 
-}   
- 
-/*-----------------------------------------
-  My function to check that no variables
-  were entered
-  -----------------------------------------*/
-bool Check_valid(string my_string)
-{
-    //Changed check that consecutive '+', '-' 
-    //signs do not exist
-    for (int i = 0; i<my_string.length(); i++)
-    {
-        if((my_string[i]=='+')||(my_string[i]=='-'))
-        {
-            if((my_string[i+1]=='+')||(my_string[i+1]=='-'))
-            {
-                return false;
-            }
-        }
-    }            
-         
-         
-    string array="0123456789+-*/()^";
- 
-    int count=0;
-    for (int i=0; i<my_string.length(); i++)
-    {
-        for(int j=0; j<array.length(); j++)
-        {
-            if(my_string[i]==array[j])
-            {
-               count++;
-            }
-        }
-    }
-     
-    if (count == my_string.length())
-    {
-      return true;   
-    }
-    else
-    {   
-      return false;   
-    }
-             
+    lastRead = myString[i];         
+  }
+
+  if(myString[myString.length()-1] == ')')
+    count--;
+  if(count != 0) {
+  	cout << "Check parenthesis \n";
+  	return false;
+  }
+
+  // Confirms there are no other characters but the valid ones
+  for(int i = 0; i < myString.length(); i++) {
+    if (myString[i] == '=')
+      equal++;
+    else if (myString[i] == 'y')
+      y++;
+    for(int j = 0; j < array.length(); j++)
+      if(myString[i] == array[j])
+        count++;        
+  }
+
+  if (equal != y || y > 1 || equal > 1) {
+    cout << "Need both = and y in equation or too many y or = in expression \n";
+    return false;
+  }
+
+  return (count == myString.length());          
 }  
- 
-/*-----------------------------------
-  My function to actually evaluate
-  postfix expression
-  ----------------------------------*/
- 
-void Next(string my_string)
-{
-  vector <string> array; 
-  string tempy;
-   
-  int comma_count=0;
-  for (int a=0; a<my_string.length();a++)
-  {
-      if(my_string[a]==',')
-      {
-          comma_count++;
-      }
-  }        
- 
-  //Evaluate tokens using the "," as a delimiter
-  while (my_string.find(",", 0) != string::npos)
-  { 
-    //lifted from the FAQ
-    //does the string have a comma in it?
-    size_t pos = my_string.find(",", 0); 
-    tempy = my_string.substr(0, pos);      
-    my_string.erase(0, pos + 1);           
-    array.push_back(tempy); //store in vector              
+
+// Add delimiter between characters in string
+string format(string myString) {
+  for(int i = 0; i < myString.length(); i++) {
+    if (myString[i] == 'y')
+      myString.insert(i+1, "d");
+    else if((isdigit(myString[i]) && !isdigit(myString[i+1]))) 
+      myString.insert(i+1, "d");
+    else if(myString[i] == '-' && (myString[i-1] != 'd' && myString[i-1] != ')'))
+      myString.replace(i,1,"m"); 
   }
- 
-  //array.push_back(my_string);//the last token is all alone 
-   
-  stack <string> my_stack;//initialise stack
-  string temp[100];
-  string ch;
-   
-  for (int i=0; i<comma_count; i++)
-  {
-       
-      string s;
-      s=array[i]; //make it easier to read
-       
-      if ((s!="+")&&
-          (s!="*")&&
-          (s!="-")&&
-          (s!="/")&&
-          (s!="^"))
-           {
-             my_stack.push(s);
-             //push numbers onto the stack
-           }
-         else //i.e if it encounters an operator
-         {
-               my_stack.push(s);//push operator onto stack
-               temp[0]= my_stack.top();//store value
-               my_stack.pop(); //erase from the stack
-              
-               temp[1]= my_stack.top();//store value
-               my_stack.pop();//erase from the stack
-                
-               temp[2]= my_stack.top();//store value
-               my_stack.pop();//erase from the stack
-             
- 
-               double z;
-               z = Eval(temp);
-               ostringstream outs;  // Declare an output string stream.
-               outs << z;   // Convert value into a string.
-               ch = outs.str(); 
- 
-               my_stack.push(ch);
-   
-           }                
-  }
-  cout<<ch;  
-  cin.get(); 
-} 
-/*------------------------------
-  My function to do the math:
-  Converts string to double
-  then back to string
-  ------------------------------*/
-double Eval(string temp[])
-{
-    string a,b,c;
-    a=temp[2]; b=temp[0]; c=temp[1];
-    double x,y,z;
-    istringstream ins,inse;
-    ins.str(a);inse.str(c);
-    ins >> x;
-    inse >> y;
-     
-     if (b=="+")
-     {
-        z = x + y;
-        return z;
-     } 
-     else if (b=="-")
-     {
-        z = x - y;
-        return z;
-     } 
-     else if (b=="*")
-     {
-        z = x * y;
-        return z;
-     }
-     else if (b=="/")
-     {
-        z = x / y;
-        return z;
-     }       
-     else if (b=="^")
-     {
-        z = pow(x,y);
-        return z;
-     }                             
+
+  return myString;
 }
 
+// Convert to stack
+void convert(const string & inString, string &outString) {
+  stack<char> operatorStack;
+  char topSymbol, symbol;
+  int k;
 
+  for(k = 0; k < inString.size(); k++) {
+    symbol = inString[k];
+    if(isOperand(symbol))
+      outString = outString + symbol;
+    else {
+      while(!operatorStack.empty() && takesPrecedence(operatorStack.top(), symbol)) {
+        topSymbol = operatorStack.top();
+        operatorStack.pop();
+        outString = outString + topSymbol;
+      }
+      if(!operatorStack.empty() && symbol == ')')
+        operatorStack.pop();   // discard matching (
+      else
+        operatorStack.push(symbol);
+    }
+  }
+ 
+  while(!operatorStack.empty()) {
+    topSymbol = operatorStack.top();
+    operatorStack.pop();
+    outString = outString + topSymbol;
+  }
+}
+
+// Confirms c is an operand (letter or number)
+bool isOperand(char c) {
+	return (((c >= 'a') && (c <= 'z')) || ((c >= 'A') && (c <= 'Z')) || ((c >= '0') && (c <= '9')));
+}
+ 
+// A and B can be an operator or parenthesis, returns true if A takes precedence.
+bool takesPrecedence(char operatorA, char operatorB) {
+  if(operatorA == '=')
+  	return true;
+  else if(operatorA == '(')
+    return false;
+  else if(operatorB == '(')
+    return false;
+  else if(operatorB == ')')
+    return true;
+  else if(operatorA == '*' || operatorA == '/')
+    return true;
+  else if(operatorB == '*' || operatorB == '/')
+    return false;
+  else
+    return true;
+}
+
+// Change delimiter to comma
+string addComma(string myString) {
+  for(int i = 0; i < myString.length(); i++) {
+    if(isOperator(myString[i]))
+      myString.insert(i+1, ",");
+    else if (myString[i] == 'd')
+      myString.replace(i, 1, ",");
+    else if (myString[i] == 'm')
+      myString.replace(i, 1, "-");               
+  }  
+  return myString; 
+}
+
+// Evaluate equation or expression
+void eval(string myString) {
+  vector<string> v;
+  vector<string> array;
+  std::vector<string>::iterator it;
+  vector<string> C;			// Opposite side of = that y is on
+  vector<string> leftSide;	// left side of the y sign
+  vector<string> rightSide;	// right side of the y sign
+
+  int indexY = -1, indexE = -1;
+  //Evaluate tokens using the "," as a delimiter
+  while(myString.find(",", 0) != string::npos) { 
+    size_t pos = myString.find(",", 0); 
+    v.push_back(myString.substr(0, pos)); //store in vector     
+    myString.erase(0, pos + 1);           
+  }
+
+  // find index of Y and E, only do swap if we have both in the list
+  it = find(v.begin(), v.end(), "y");
+  indexY = it - v.begin();
+  it = find(v.begin(), v.end(), "=");
+  indexE = it - v.begin();
+  if(indexY == v.size() && indexE != v.size())
+  	indexY = find(v.begin(), v.end(), "-y") - v.begin();
+
+  // Equal and y sign exists, split vector into 3 parts.
+  if(indexE != v.size()) {
+    // Rearrange Y and = index
+    if (*(it-1) == "y" || *(it-1) == "-y" || isdigit(*(it-1)->c_str())) {
+    	swap(*it, *(it-1));
+    	indexE--;
+    	if (*it == "y" || *it == "-y")
+    		indexY = it - v.begin();
+    }
+    // Make C, leftSide and rightSide
+    if(indexY < indexE) {
+      for(std::vector<string>::const_iterator i = v.begin() + indexE + 1; i != v.end(); ++i)
+        C.push_back(*i);
+      for(std::vector<string>::const_iterator i = v.begin(); i != v.begin() + indexY; ++i)
+        leftSide.push_back(*i);
+      for(std::vector<string>::const_iterator i = v.begin() + indexY + 1; i != v.begin() + indexE; ++i)
+        rightSide.push_back(*i);
+    }
+    else if (indexY > indexE) {
+      for(std::vector<string>::const_iterator i = v.begin(); i != v.begin() + indexE; ++i)
+        C.push_back(*i);
+      for(std::vector<string>::const_iterator i = v.begin() + indexE + 1; i != v.begin() + indexY; ++i)
+        leftSide.push_back(*i);
+      for(std::vector<string>::const_iterator i = v.begin() + indexY + 1; i != v.end(); ++i)
+        rightSide.push_back(*i);
+    }
+
+    // Prints to check
+    cout << "\nY: " << indexY << " =: " << indexE << " v.size(): " << v.size() << "\n";
+    cout << "Before splitting: ";
+    for(vector<string>::const_iterator i = v.begin(); i != v.end(); ++i) {
+      std::cout << *i << ' ';
+    }
+    cout << "\nC: ";
+    for(vector<string>::const_iterator i = C.begin(); i != C.end(); ++i) {
+      std::cout << *i << ' ';
+    }
+    cout << "\nleftSide: ";
+    for(vector<string>::const_iterator i = leftSide.begin(); i != leftSide.end(); ++i) {
+      std::cout << *i << ' ';
+    }
+    cout << "\nrightSide: ";
+    for(vector<string>::const_iterator i = rightSide.begin(); i != rightSide.end(); ++i) {
+      std::cout << *i << ' ';
+    }
+    cout << "\n";
+    // Above can be removed
+
+    string iC = getAnswer(C);
+    string iL = getAnswer(leftSide);
+
+    // Stitch vectors together - how? C, L, R. operators depends on R
+    if(rightSide[0] == "+") {
+    	array.push_back(iC);
+    	array.push_back(iL);
+    	for(vector<string>::const_iterator i = rightSide.begin(); i != rightSide.end(); ++i)
+    		array.push_back(*i);
+    } 
+    else if(rightSide[0] == "-") {
+    	iC.insert(0, "-");
+    	array.push_back(iC);
+    	array.push_back(iL);
+    	array.push_back("+");
+    	for(vector<string>::const_iterator i = rightSide.begin() + 1; i != rightSide.end(); ++i) {
+    		array.push_back(*i);
+    	}
+    	cout << "y = " << getAnswer(array) << "\n";
+    } 
+    else if(rightSide[0] == "-") {
+
+    }
+    else if(rightSide[0] == "-") {
+
+    }
+    else if(rightSide[0] == "-") {
+
+    }
+    //else if(isdigit(rightSide[0])) {
+
+    //}
+
+    cout << "C: " << iC << "\nL: " << iL << "\n";
+
+  }
+  // There's no equation, just evaluate expression
+  else
+  	cout << getAnswer(v);
+
+
+}
+
+// Return a string that is the answer from the sent in vector
+string getAnswer(vector<string> array) {
+	stack<string> my_stack; //initialise stack
+  	string temp[100];
+  	double z = 0;
+  	if (array.size() == 1)
+  		z = stod(array[0]);
+  	else {
+  		for(int i = 0; i < array.size(); i++) {
+	    	if(!isOperator(array[i])) {
+	      		my_stack.push(array[i]); //push numbers onto the stack
+	    	}
+	    	else { //i.e if it encounters an operator
+		    	my_stack.push(array[i]);//push operator onto stack
+		      	temp[0]= my_stack.top();//store value
+		      	my_stack.pop(); //erase from the stack
+
+		      	temp[1]= my_stack.top();//store value
+		      	my_stack.pop();//erase from the stack
+
+		      	temp[2]= my_stack.top();//store value
+		      	my_stack.pop();//erase from the stack
+
+		      	z = calc(temp);
+
+		      	ostringstream outs;  // Declare an output string stream.
+		      	outs << z;   // Convert value into a string.
+		      	my_stack.push(outs.str());
+			}                
+		}	
+  	}
+  	
+	ostringstream outString;
+	outString << z;
+	return outString.str();
+}
+  
+
+// Calculate the result of two digits and an operand
+double calc(string temp[]) {
+  double x = stod(temp[2]);
+  double y = stod(temp[1]);
+  string b = temp[0];
+
+  if(b == "+")
+    return (x + y); 
+  else if (b == "-")
+    return (x - y);
+  else if (b == "*")
+    return (x * y);
+  else if (b == "/")
+    return (x / y);
+  else if (b == "=")
+    return pow(x, y);
+}
 
 
