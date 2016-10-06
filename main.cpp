@@ -32,12 +32,10 @@ The neural network has 3 layers.
 
 #include <stdlib.h>
 
-/*
 #include "opencv2/opencv.hpp"
 #include "opencv2/ml/ml.hpp"
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
-*/
 
 #include <stdio.h>
 #include <string.h>
@@ -50,7 +48,7 @@ The neural network has 3 layers.
 #include <algorithm>
 
 using namespace std;
-//using namespace cv;
+using namespace cv;
 
 
 #define VARIABLE 10
@@ -83,7 +81,7 @@ string format(string);
 string addComma(string);
 double calc(string[]);
 string getAnswer(vector<string> array);
-void eval(string);
+string eval(string);
 
 int main(int argc, char** argv) {
 	/*
@@ -122,6 +120,7 @@ int main(int argc, char** argv) {
  
   do {
   	string inString, outString; // local to this loop
+    string y;
 
     cout <<"\n    Enter your expression with No spaces!\n\n";
     cout <<"     e.g. (4+2)*3/2 "<< endl;
@@ -130,13 +129,11 @@ int main(int argc, char** argv) {
 
 		// Assume the reading of the equation is done, predicted and put into a string called inString.
 		if(isValid(inString)) {
-	      	convert(format(inString), outString);
-		    outString = addComma(outString);
+	      convert(format(inString), outString);
+		    outString = addComma(outString);  
+		    y = eval(outString);
 
-		    cout << "The equivalent outString expression is:" << endl << outString;
-		      
-		    cout << "\n\n The answer is: \n";
-		    eval(outString); // y = eval(outString);
+        cout << "\n\nAnswer: y = " << y;
 
 		    cout << endl << "\nDo another (y/n)? ";
 		    cin >> reply;
@@ -310,13 +307,14 @@ string addComma(string myString) {
 }
 
 // Evaluate equation or expression
-void eval(string myString) {
+string eval(string myString) {
   vector<string> v;
   vector<string> array;
   std::vector<string>::iterator it;
   vector<string> C;			// Opposite side of = that y is on
   vector<string> leftSide;	// left side of the y sign
   vector<string> rightSide;	// right side of the y sign
+  bool negative = false;
 
   int indexY = -1, indexE = -1;
   //Evaluate tokens using the "," as a delimiter
@@ -331,97 +329,195 @@ void eval(string myString) {
   indexY = it - v.begin();
   it = find(v.begin(), v.end(), "=");
   indexE = it - v.begin();
-  if(indexY == v.size() && indexE != v.size())
+  if(indexY == v.size() && indexE != v.size()) {
+    negative = true;
   	indexY = find(v.begin(), v.end(), "-y") - v.begin();
+  }
 
-  // Equal and y sign exists, split vector into 3 parts.
-  if(indexE != v.size()) {
-    // Rearrange Y and = index
-    if (*(it-1) == "y" || *(it-1) == "-y" || isdigit(*(it-1)->c_str())) {
-    	swap(*it, *(it-1));
-    	indexE--;
-    	if (*it == "y" || *it == "-y")
-    		indexY = it - v.begin();
-    }
-    // Make C, leftSide and rightSide
-    if(indexY < indexE) {
-      for(std::vector<string>::const_iterator i = v.begin() + indexE + 1; i != v.end(); ++i)
-        C.push_back(*i);
-      for(std::vector<string>::const_iterator i = v.begin(); i != v.begin() + indexY; ++i)
-        leftSide.push_back(*i);
-      for(std::vector<string>::const_iterator i = v.begin() + indexY + 1; i != v.begin() + indexE; ++i)
-        rightSide.push_back(*i);
-    }
-    else if (indexY > indexE) {
-      for(std::vector<string>::const_iterator i = v.begin(); i != v.begin() + indexE; ++i)
-        C.push_back(*i);
-      for(std::vector<string>::const_iterator i = v.begin() + indexE + 1; i != v.begin() + indexY; ++i)
-        leftSide.push_back(*i);
-      for(std::vector<string>::const_iterator i = v.begin() + indexY + 1; i != v.end(); ++i)
-        rightSide.push_back(*i);
-    }
-
-    // Prints to check
-    cout << "\nY: " << indexY << " =: " << indexE << " v.size(): " << v.size() << "\n";
-    cout << "Before splitting: ";
-    for(vector<string>::const_iterator i = v.begin(); i != v.end(); ++i) {
-      std::cout << *i << ' ';
-    }
-    cout << "\nC: ";
-    for(vector<string>::const_iterator i = C.begin(); i != C.end(); ++i) {
-      std::cout << *i << ' ';
-    }
-    cout << "\nleftSide: ";
-    for(vector<string>::const_iterator i = leftSide.begin(); i != leftSide.end(); ++i) {
-      std::cout << *i << ' ';
-    }
-    cout << "\nrightSide: ";
-    for(vector<string>::const_iterator i = rightSide.begin(); i != rightSide.end(); ++i) {
-      std::cout << *i << ' ';
-    }
-    cout << "\n";
-    // Above can be removed
-
-    string iC = getAnswer(C);
-    string iL = getAnswer(leftSide);
-
-    // Stitch vectors together - how? C, L, R. operators depends on R
-    if(rightSide[0] == "+") {
-    	array.push_back(iC);
-    	array.push_back(iL);
-    	for(vector<string>::const_iterator i = rightSide.begin(); i != rightSide.end(); ++i)
-    		array.push_back(*i);
-    } 
-    else if(rightSide[0] == "-") {
-    	iC.insert(0, "-");
-    	array.push_back(iC);
-    	array.push_back(iL);
-    	array.push_back("+");
-    	for(vector<string>::const_iterator i = rightSide.begin() + 1; i != rightSide.end(); ++i) {
-    		array.push_back(*i);
-    	}
-    	cout << "y = " << getAnswer(array) << "\n";
-    } 
-    else if(rightSide[0] == "-") {
-
-    }
-    else if(rightSide[0] == "-") {
-
-    }
-    else if(rightSide[0] == "-") {
-
-    }
-    //else if(isdigit(rightSide[0])) {
-
-    //}
-
-    cout << "C: " << iC << "\nL: " << iL << "\n";
+  // There is no equation, return expression
+  if(indexE == v.size()) {
+    if (negative)
+      return getAnswer(v).insert(0, "-");
+    else
+      return getAnswer(v);
 
   }
-  // There's no equation, just evaluate expression
-  else
-  	cout << getAnswer(v);
+  // Rearrange Y and = index if neighbour case, split vector into 3 parts
+  if (*(it-1) == "y" || *(it-1) == "-y" || isdigit(*(it-1)->c_str())) {
+  	swap(*it, *(it-1));
+  	indexE--;
+  	if (*it == "y" || *it == "-y") {
+  		indexY = it - v.begin();
+    }
+  }
+  // y = () expression case
+  it = v.begin();
+  if (*it == "=" && (*(it+1) == "y" || *(it+1) == "-y")) {
+    swap(*it, *(it+1));
+    indexE++;
+    indexY--;
+  }
 
+  // Make C, leftSide and rightSide
+  if(indexY < indexE) {
+    for(std::vector<string>::const_iterator i = v.begin() + indexE + 1; i != v.end(); ++i)
+      C.push_back(*i);
+    for(std::vector<string>::const_iterator i = v.begin(); i != v.begin() + indexY; ++i)
+      leftSide.push_back(*i);
+    for(std::vector<string>::const_iterator i = v.begin() + indexY + 1; i != v.begin() + indexE; ++i)
+      rightSide.push_back(*i);
+  }
+  else if (indexY > indexE) {
+    for(std::vector<string>::const_iterator i = v.begin(); i != v.begin() + indexE; ++i)
+      C.push_back(*i);
+    for(std::vector<string>::const_iterator i = v.begin() + indexE + 1; i != v.begin() + indexY; ++i)
+      leftSide.push_back(*i);
+    for(std::vector<string>::const_iterator i = v.begin() + indexY + 1; i != v.end(); ++i)
+      rightSide.push_back(*i);
+  }
+
+
+  string iC = getAnswer(C);
+  string iL = getAnswer(leftSide);
+  vector<string> pushOpposite;
+  bool consecutive = false;
+  string temp;
+
+  it = rightSide.begin();
+  // y = expression CASE
+  if (it == rightSide.end()) {
+    if(negative)
+      iC.insert(0, "-");
+    return iC;
+  }
+  // + and digit CASE
+  else if(*it == "+" || isdigit(*it->c_str())) {
+  	array.push_back(iC);
+    array.push_back(iL);
+
+    // digit -> * or digit -> / CASE
+  	if(isdigit(*it->c_str())) {
+      array.pop_back();
+      if(*(it+1) == "*") {
+        pushOpposite.push_back(*it);
+        pushOpposite.push_back("/");
+        it++;
+        consecutive = true;
+      }
+      else if (*(it+1) == "/") {
+        pushOpposite.push_back(*it);
+        pushOpposite.push_back("*");
+        it++;
+        consecutive = true;
+      }
+      else
+        array.push_back(*it);
+      it++;
+    }
+      
+  	for(; it != rightSide.end(); ++it) {
+      if(*it == "+") {
+        consecutive = false;
+        array.push_back("-");
+      }
+      else if(*it == "-") {
+        consecutive = false;
+        array.push_back("+");
+      }
+      else
+  		  array.push_back(*it);
+      if(consecutive) {
+        temp = *(array.end() - 1);
+        if(*(it+1) == "*") {
+          array.pop_back();
+          it++;
+          pushOpposite.push_back(temp);
+          pushOpposite.push_back("/");
+        }
+        else if (*(it+1) == "/") {
+          array.pop_back();
+          it++;
+          pushOpposite.push_back(temp);
+          pushOpposite.push_back("*");
+        }
+      }
+    }
+    if(!pushOpposite.empty())
+      array.insert(array.end(), pushOpposite.begin(), pushOpposite.end());
+  } 
+  // - CASE
+  else if(*it == "-") {
+  	iC.insert(0, "-");
+  	array.push_back(iC);
+  	array.push_back(iL);
+  	array.push_back("+");
+    it++;
+  	for(; it != rightSide.end(); ++it) {
+  		array.push_back(*it);
+  	}
+  } 
+  // * and / CASE
+  else if(*it == "*" || *it == "/") {
+    // split up iL
+    temp = *(leftSide.end() - 1);
+    leftSide.pop_back();
+    iL = getAnswer(leftSide);
+    pushOpposite.push_back(temp);
+    consecutive = true;
+    if(*it == "*")
+      pushOpposite.push_back("/");
+    else if(*it == "/")
+      pushOpposite.push_back("*");
+
+    array.push_back(iC);
+    array.push_back(iL);
+    array.push_back("-");
+    it++;
+    for(; it != rightSide.end(); ++it) {
+      if (*it == "+") {
+        consecutive = false;
+        array.push_back("-");
+      }
+      else if (*it == "-") {
+        consecutive = false;
+        array.push_back("+");
+      }
+      else
+        array.push_back(*it);
+      if(consecutive) {
+        temp = *(array.end() - 1);
+        if(*(it+1) == "*") {
+          array.pop_back();
+          it++;
+          pushOpposite.push_back(temp);
+          pushOpposite.push_back("/");
+        }
+        else if (*(it+1) == "/") {
+          array.pop_back();
+          it++;
+          pushOpposite.push_back(temp);
+          pushOpposite.push_back("*");
+        }
+      }
+    }
+
+    if(!pushOpposite.empty())
+      array.insert(array.end(), pushOpposite.begin(), pushOpposite.end());
+
+  }
+
+  // Print out final expression
+  cout << "y = ";
+  it = array.begin();
+  for(; it != array.end(); ++it)
+    cout << *it << " ";
+
+
+  // Done with algebra, return answer
+  if (negative)
+    return getAnswer(array).insert(0, "-");
+  else
+    return getAnswer(array);
 
 }
 
