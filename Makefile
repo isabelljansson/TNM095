@@ -6,7 +6,7 @@ LFLAGS= -L/usr/local/Cellar/opencv3/HEAD-e0435d3_4/lib/ -lm -lopencv_core -lopen
 all: output preprocessing training
 
 clean:
-	-$(RM) *.o output training
+	-$(RM) *.o output training preprocessing
 
 output: main.o
 	g++ -o $@ main.o $(LFLAGS)

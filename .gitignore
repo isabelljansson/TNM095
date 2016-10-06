@@ -2,6 +2,7 @@ training
 output
 preprocessing
 *.o
-output
-preprocessed_output/
+preprocessed_output/testset.txt
+preprocessed_output/trainingset.txt
+param.xml
 .DS_Store

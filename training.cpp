@@ -91,50 +91,89 @@ void read_dataset(char *filename, cv::Mat &data, cv::Mat &classes, int total_sam
 int main()
 {
 	//cout << "info opencv\n" << getBuildInformation() << endl;
-	cout << "Training started..\n";
+	
 
-	// Create matrices
+	// Create matrices for training
 	Mat training_set(ALL_TRAINING_SAMPLES, ALL_ATTRIBUTES, CV_32F);//Training samples
 	Mat training_set_classifications(ALL_TRAINING_SAMPLES, CLASSES, CV_32F); //index of each traning sample
+	Mat train_responses( ALL_TRAINING_SAMPLES, CLASSES, CV_32F ); //store result weightage of each class
+
+	// Create matrices for testing
 	Mat test_set(ALL_TEST_SAMPLES, ALL_ATTRIBUTES, CV_32F); //Test samples
 	Mat test_set_classifications(ALL_TEST_SAMPLES, CLASSES, CV_32F); //index of each test sample
+	Mat class_result(1, CLASSES, CV_32F);
 
 	// Load training and test sets
+	// Store data in matrices training_set and test_set
 	read_dataset(INPUT_PATH_TRAINING, training_set, training_set_classifications, ALL_TRAINING_SAMPLES);
 	read_dataset(INPUT_PATH_TESTING, test_set, test_set_classifications, ALL_TEST_SAMPLES);
-	
+
 	// Intitialize the three layers
-	Mat layers(3, 1, CV_32S); //3 rows, 1 col, 32 bit signed ints
-	layers.row(0) = Scalar(ALL_ATTRIBUTES);
-	layers.row(1) = Scalar(ATTRIBUTES);
-	layers.row(2) = Scalar(CLASSES);
-	//layers.at<int>(0, 0) = ALL_ATTRIBUTES;//input layer, 256 neurons
-	//layers.at<int>(1, 0) = ATTRIBUTES;//hidden layer, 16 neurons
-	//layers.at<int>(2, 0) = CLASSES;//output layer, 16 neurons
+	Mat layers(3, 1, CV_32SC1); //3 rows, 1 col, 32 bit signed ints
+	layers.row(0) = Scalar(ALL_ATTRIBUTES); //input layer, 256 neurons
+	layers.row(1) = Scalar(ATTRIBUTES); //hidden layer, 16 neurons
+	layers.row(2) = Scalar(CLASSES); //output layer, 16 neurons
 
 	// Create network
 	// See http://docs.opencv.org/2.4/modules/ml/doc/neural_networks.html for more info
 	// Activation function: Sigmoid function (default) with parameters a and b
 	// a: 0.6
 	// b: 1.0
-	Ptr<ANN_MLP> nnetwork = ANN_MLP::create();
-	nnetwork->setLayerSizes(layers);
+	Ptr<ANN_MLP> nn = ANN_MLP::create();
+	nn->setActivationFunction(ANN_MLP::SIGMOID_SYM, 0.6, 1);
+	nn->setTrainMethod(ANN_MLP::BACKPROP);
+	nn->setBackpropMomentumScale(0.1);
+	nn->setBackpropWeightScale(0.1);
+	nn->setTermCriteria(TermCriteria(TermCriteria::MAX_ITER, (int)100000, 1e-6));
+	nn->setLayerSizes(layers);
 
-	/*ANN_MLP::Params params = ANN_MLP::Params::Params(layers, ANN_MLP::SIGMOID_SYM, 1, 1, 
-			TermCriteria( TermCriteria::MAX_ITER + TermCriteria::EPS, 1000, 0.01 ), 
-			ANN_MLP::Params::BACKPROP, 0.1, 0.1);*/
+	cout << "Starting training...\n";
+	Ptr<TrainData> tdata = TrainData::create(training_set, ROW_SAMPLE, train_responses);
+	nn->train(tdata);
+	cout << "Training completed...\n";
 
-	//nnetwork->StatModel::train(training_set, params);
+	// Save the model into an xml file
+	cout << "Saving model to xml file...\n";
+	FileStorage storage(OUTPUT_PATH_XML, FileStorage::WRITE);
+	nn->write(storage);
+
+	// Test neuron network by predicting the classes for test_set
+	cv::Mat test_sample;
+	int correct_class = 0;//count of correct classifications
+	int wrong_class = 0;//count of wrong classifications
+
+	cout << "Testing neuron network...\n";
+	for (int tsample = 0; tsample < ALL_TEST_SAMPLES; tsample++) {
+
+		// Extract a sample
+		test_sample = test_set.row(tsample);
+
+		// Try to predict its class 
+		// class_result will store the weights from each class
+		nn->predict(test_sample, class_result);
+
+		// Find the best class in class_result (the heighest weight)
+		int maxIndex = 0;
+		float value = 0.0f;
+		float maxValue = class_result.at<float>(0, 0);
+		for (int index = 1; index < CLASSES; index++)
+		{
+			value = class_result.at<float>(0, index);
+			if (value>maxValue)
+			{
+				maxValue = value;
+				maxIndex = index;
+			}
+		}
+		cout << "Testing Sample: " << tsample << " -> Class result: " << maxIndex << "\n";
+		
 
 
-	nnetwork->setActivationFunction(ANN_MLP::SIGMOID_SYM, 1, 1);
+	}
+
+
+
 	
-
-	
-	//Find weights w and biases b that minimazes the cost function
-
-
-	cout << "Training completed..\n";
 
 	return 0;
 }
