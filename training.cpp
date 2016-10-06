@@ -31,12 +31,12 @@ using namespace cv;
 using namespace ml;
 
 ////////////////////////////////////////
-#define CLASSES 16								//Number of distinct labels.
-#define TRAINING_SAMPLES 7						//Number of samples in training dataset
+#define CLASSES 7								//Number of distinct labels.
+#define TRAINING_SAMPLES 3						//Number of samples in training dataset
 #define ALL_TRAINING_SAMPLES (TRAINING_SAMPLES * CLASSES)       //All samples in training dataset
 #define ATTRIBUTES 16							// Number of pixels per sample (16*16)
 #define ALL_ATTRIBUTES (ATTRIBUTES * ATTRIBUTES)  // All pixels per sample.
-#define TEST_SAMPLES 7						//Number of samples in test dataset
+#define TEST_SAMPLES 3						//Number of samples in test dataset
 #define ALL_TEST_SAMPLES (TEST_SAMPLES * CLASSES)				//All samples in test dataset
 #define INPUT_PATH_TRAINING "./preprocessed_output/trainingset.txt"
 #define INPUT_PATH_TESTING "./preprocessed_output/testset.txt"
@@ -120,11 +120,11 @@ int main()
 	// a: 0.6
 	// b: 1.0
 	Ptr<ANN_MLP> nn = ANN_MLP::create();
-	nn->setActivationFunction(ANN_MLP::SIGMOID_SYM, 0.6, 1);
+	nn->setActivationFunction(ANN_MLP::SIGMOID_SYM, 0.6, 1.0);
 	nn->setTrainMethod(ANN_MLP::BACKPROP);
 	nn->setBackpropMomentumScale(0.1);
 	nn->setBackpropWeightScale(0.1);
-	nn->setTermCriteria(TermCriteria(TermCriteria::MAX_ITER, (int)100000, 1e-6));
+	nn->setTermCriteria(TermCriteria(TermCriteria::MAX_ITER, (int)1000, 1e-6));
 	nn->setLayerSizes(layers);
 
 	cout << "Starting training...\n";
@@ -141,6 +141,8 @@ int main()
 	cv::Mat test_sample;
 	int correct_class = 0;//count of correct classifications
 	int wrong_class = 0;//count of wrong classifications
+	//classification matrix gives the count of classes to which the samples were classified.
+	int classification_matrix[CLASSES][CLASSES] = { {} };
 
 	cout << "Testing neuron network...\n";
 	for (int tsample = 0; tsample < ALL_TEST_SAMPLES; tsample++) {
@@ -165,13 +167,33 @@ int main()
 				maxIndex = index;
 			}
 		}
-		cout << "Testing Sample: " << tsample << " -> Class result: " << maxIndex << "\n";
-		
-
-
+		//cout << "Testing Sample: " << tsample << " -> Class result: " << maxIndex << "\n";
+		//Now compare the predicted class to the actural class. if the prediction is correct then\
+		            //test_set_classifications[tsample][ maxIndex] should be 1.
+		//if the classification is wrong, note that.
+		if (test_set_classifications.at<float>(tsample, maxIndex) != 1.0f) {
+			// if they differ more than floating point error => wrong class
+			wrong_class++;
+			//find the actual label 'class_index'
+			for (int class_index = 0; class_index<CLASSES; class_index++) {
+				if (test_set_classifications.at<float>(tsample, class_index) == 1.0f) {
+					classification_matrix[class_index][maxIndex]++;// A class_index sample was wrongly classified as maxindex.
+					break;
+				}
+			}
+		}
+		else {
+			// otherwise correct
+			correct_class++;
+			classification_matrix[maxIndex][maxIndex]++;
+		}
 	}
-
-
+	cout << "\n\nResults on the testing dataset\n"
+		 << "Correct classification: " << correct_class << "  (" 
+		 << (double)(correct_class * 100 / ALL_TEST_SAMPLES) << "%)\n"
+		 << "Wrong classification: " << wrong_class << "  (" 
+		 << (double)(wrong_class * 100 / ALL_TEST_SAMPLES) << "%)\n";
+	
 
 	
 
