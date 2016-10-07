@@ -31,16 +31,16 @@ using namespace cv;
 using namespace ml;
 
 ////////////////////////////////////////
-#define CLASSES 7								//Number of distinct labels.
-#define TRAINING_SAMPLES 3						//Number of samples in training dataset
+#define CLASSES 16								//Number of distinct labels.
+#define TRAINING_SAMPLES 7						//Number of samples in training dataset
 #define ALL_TRAINING_SAMPLES (TRAINING_SAMPLES * CLASSES)       //All samples in training dataset
 #define ATTRIBUTES 16							// Number of pixels per sample (16*16)
 #define ALL_ATTRIBUTES (ATTRIBUTES * ATTRIBUTES)  // All pixels per sample.
-#define TEST_SAMPLES 3						//Number of samples in test dataset
+#define TEST_SAMPLES 7						//Number of samples in test dataset
 #define ALL_TEST_SAMPLES (TEST_SAMPLES * CLASSES)				//All samples in test dataset
-#define INPUT_PATH_TRAINING "./preprocessed_output/trainingset.txt"
-#define INPUT_PATH_TESTING "./preprocessed_output/testset.txt"
-#define OUTPUT_PATH_XML "./param.xml"
+#define INPUT_PATH_TRAINING "preprocessed_output/trainingset.txt"
+#define INPUT_PATH_TESTING "preprocessed_output/testset.txt"
+#define OUTPUT_PATH_XML "param.xml"
 ////////////////////////////////////////
 
 
@@ -91,28 +91,42 @@ void read_dataset(char *filename, cv::Mat &data, cv::Mat &classes, int total_sam
 int main()
 {
 	//cout << "info opencv\n" << getBuildInformation() << endl;
-	
 
 	// Create matrices for training
 	Mat training_set(ALL_TRAINING_SAMPLES, ALL_ATTRIBUTES, CV_32F);//Training samples
 	Mat training_set_classifications(ALL_TRAINING_SAMPLES, CLASSES, CV_32F); //index of each traning sample
-	Mat train_responses( ALL_TRAINING_SAMPLES, CLASSES, CV_32F ); //store result weightage of each class
-
+	
 	// Create matrices for testing
 	Mat test_set(ALL_TEST_SAMPLES, ALL_ATTRIBUTES, CV_32F); //Test samples
 	Mat test_set_classifications(ALL_TEST_SAMPLES, CLASSES, CV_32F); //index of each test sample
-	Mat class_result(1, CLASSES, CV_32F);
+	
+
+	int outputTrainingDataArray[ALL_TEST_SAMPLES][1];
+
+	for (int i = 0; i < ALL_TEST_SAMPLES; i++){
+		  outputTrainingDataArray[i][0] = (i%CLASSES);
+	}
 
 	// Load training and test sets
 	// Store data in matrices training_set and test_set
 	read_dataset(INPUT_PATH_TRAINING, training_set, training_set_classifications, ALL_TRAINING_SAMPLES);
 	read_dataset(INPUT_PATH_TESTING, test_set, test_set_classifications, ALL_TEST_SAMPLES);
 
+	/*cout << "training_set\n";
+	for (int i = 0; i < ALL_TEST_SAMPLES; i++){
+		for (int j = 0; j < ALL_ATTRIBUTES; j++){
+			cout << training_set.at<float>(i, j) << " ";
+		}
+		cout << endl;
+	}*/
+
+
 	// Intitialize the three layers
-	Mat layers(3, 1, CV_32SC1); //3 rows, 1 col, 32 bit signed ints
-	layers.row(0) = Scalar(ALL_ATTRIBUTES); //input layer, 256 neurons
-	layers.row(1) = Scalar(ATTRIBUTES); //hidden layer, 16 neurons
-	layers.row(2) = Scalar(CLASSES); //output layer, 16 neurons
+	Mat layers(3, 1, CV_32S); //3 rows, 1 col, 32 bit signed ints
+	layers.at<int>(0, 0) = ALL_ATTRIBUTES;//input layer, 256 neurons
+	layers.at<int>(1, 0) = ATTRIBUTES; //hidden layer, 16 neurons
+	layers.at<int>(2, 0) = CLASSES; //output layer, 16 neurons
+
 
 	// Create network
 	// See http://docs.opencv.org/2.4/modules/ml/doc/neural_networks.html for more info
@@ -120,29 +134,43 @@ int main()
 	// a: 0.6
 	// b: 1.0
 	Ptr<ANN_MLP> nn = ANN_MLP::create();
-	nn->setActivationFunction(ANN_MLP::SIGMOID_SYM, 0.6, 1.0);
+	nn->setLayerSizes(layers);
+	nn->setActivationFunction(ANN_MLP::SIGMOID_SYM, 1.0, 1.0);
 	nn->setTrainMethod(ANN_MLP::BACKPROP);
 	nn->setBackpropMomentumScale(0.1);
 	nn->setBackpropWeightScale(0.1);
+
+	/*TermCriteria termCrit = TermCriteria(
+        TermCriteria::COUNT + TermCriteria::EPS,
+        1000000,
+        1e-6
+    );
+	nn->setTermCriteria(termCrit);*/
 	nn->setTermCriteria(TermCriteria(TermCriteria::MAX_ITER, (int)1000, 1e-6));
-	nn->setLayerSizes(layers);
+	
 
 	cout << "Starting training...\n";
-	Ptr<TrainData> tdata = TrainData::create(training_set, ROW_SAMPLE, train_responses);
+	Ptr<TrainData> tdata = TrainData::create(training_set, ROW_SAMPLE, test_set_classifications);
 	nn->train(tdata);
 	cout << "Training completed...\n";
+	//cout << "interations: " << it << "\n";
 
 	// Save the model into an xml file
 	cout << "Saving model to xml file...\n";
 	FileStorage storage(OUTPUT_PATH_XML, FileStorage::WRITE);
 	nn->write(storage);
 
+
+	/*************************************************
+						TESTING
+	*************************************************/
 	// Test neuron network by predicting the classes for test_set
-	cv::Mat test_sample;
+	Mat test_sample;
 	int correct_class = 0;//count of correct classifications
 	int wrong_class = 0;//count of wrong classifications
 	//classification matrix gives the count of classes to which the samples were classified.
 	int classification_matrix[CLASSES][CLASSES] = { {} };
+	Mat weights(1, CLASSES, CV_32F);
 
 	cout << "Testing neuron network...\n";
 	for (int tsample = 0; tsample < ALL_TEST_SAMPLES; tsample++) {
@@ -151,16 +179,17 @@ int main()
 		test_sample = test_set.row(tsample);
 
 		// Try to predict its class 
-		// class_result will store the weights from each class
-		nn->predict(test_sample, class_result);
+		// weights will store the weights from each class
+		nn->predict(test_sample, weights);
 
-		// Find the best class in class_result (the heighest weight)
+		// Find the best class in weights (the heighest weight)
 		int maxIndex = 0;
 		float value = 0.0f;
-		float maxValue = class_result.at<float>(0, 0);
+		float maxValue = weights.at<float>(0, 0);
 		for (int index = 1; index < CLASSES; index++)
 		{
-			value = class_result.at<float>(0, index);
+			value = weights.at<float>(0, index);
+
 			if (value>maxValue)
 			{
 				maxValue = value;
@@ -185,6 +214,7 @@ int main()
 		else {
 			// otherwise correct
 			correct_class++;
+			cout << tsample << " ";
 			classification_matrix[maxIndex][maxIndex]++;
 		}
 	}
