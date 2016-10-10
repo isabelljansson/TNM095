@@ -2,6 +2,8 @@ training
 output
 preprocessing
 *.o
+dataset/
+testset/
 preprocessed_output/testset.txt
 preprocessed_output/trainingset.txt
 param.xml
