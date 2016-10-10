@@ -46,9 +46,11 @@ The neural network has 3 layers.
 #include <vector>
 #include <math.h>
 #include <algorithm>
+#include <unordered_map>
 
 using namespace std;
 using namespace cv;
+using namespace ml;
 
 
 #define VARIABLE 10
@@ -61,6 +63,68 @@ using namespace cv;
 #define lPARENTHESIS 16
 #define rPARENTHESIS 17
 
+////////////////////////////////////////
+#define CLASSES 16               // Number of distinct labels.
+#define ATTRIBUTES 16             // Number of pixels per sample (16x16)
+#define ALL_ATTRIBUTES (ATTRIBUTES*ATTRIBUTES)  // All pixels per sample.
+#define INPUT_PATH_XML "./param.xml"
+#define CONTOUR_SIZE 60             // Accept found letters bigger than this size
+#define SCENE_SIZE_X 800            // Render in this size
+#define SCENE_SIZE_Y 600
+////////////////////////////////////////
+
+void scaleDownImage(cv::Mat &originalImg, cv::Mat &scaledDownImage)
+{
+  for (int x = 0; x<ATTRIBUTES; x++)
+  {
+    for (int y = 0; y<ATTRIBUTES; y++)
+    {
+      int yd = ceil((float)(y*originalImg.cols / ATTRIBUTES));
+      int xd = ceil((float)(x*originalImg.rows / ATTRIBUTES));
+      scaledDownImage.at<uchar>(x, y) = originalImg.at<uchar>(xd, yd);
+    }
+  }
+}
+
+void convertToPixelValueArray(cv::Mat &img, int pixelarray[])
+{
+  int i = 0;
+  for (int x = 0; x<ATTRIBUTES; x++)
+  {
+    for (int y = 0; y<ATTRIBUTES; y++)
+    {
+      pixelarray[i] = (img.at<uchar>(x, y) == 255) ? 1 : 0;
+      i++;
+    }
+  }
+}
+
+std::vector<cv::Rect> detectLetters(cv::Mat img)
+{
+  std::vector<cv::Rect> boundRect;
+  cv::Mat img_gray, img_sobel, img_threshold, img_denoise, element;
+  cvtColor(img, img_gray, CV_BGR2GRAY); // Make the image gray
+  //fastNlMeansDenoising(img_gray, img_denoise, 10);
+  cv::Sobel(img_gray, img_sobel, CV_8U, 1, 0, 3, 5, 0, cv::BORDER_DEFAULT); // apply sobel-filter
+  cv::threshold(img_sobel, img_threshold, 0, 170, CV_THRESH_OTSU + CV_THRESH_BINARY); // threshold it
+  element = getStructuringElement(cv::MORPH_RECT, cv::Size(30, 30));
+  cv::morphologyEx(img_threshold, img_threshold, CV_MOP_CLOSE, element); //Does the trick
+  std::vector< std::vector< cv::Point> > contours;
+  cv::findContours(img_threshold, contours, 0, 1);
+  std::vector<std::vector<cv::Point> > contours_poly(contours.size());
+
+  for (int i = 0; i < contours.size(); i++)
+  if (contours[i].size()>CONTOUR_SIZE)
+  {
+    cv::approxPolyDP(cv::Mat(contours[i]), contours_poly[i], 3, true);
+    cv::Rect appRect(boundingRect(cv::Mat(contours_poly[i])));
+
+    //if (appRect.width>appRect.height)
+      boundRect.push_back(appRect);
+  }
+
+  return boundRect;
+}
 
 bool isOperator(char c)
 {
@@ -72,6 +136,10 @@ bool isOperator(string s)
   return (s == "+" || s == "-" || s == "*" || s == "/" || s == "=");
 }
 
+bool xposition (cv::Rect &i, cv::Rect &j) 
+{
+  return (i.x<j.x); 
+}
 
 void convert(const string & inString, string & outString);
 bool isOperand(char c);
@@ -84,10 +152,15 @@ string getAnswer(vector<string> array);
 string eval(string);
 
 int main(int argc, char** argv) {
-	
-	bool parOpen = false;
-	int lastRead = -1;	// maybe we dont know which character is lastRead, make a vector with all characters?
-	int currRead = -1;
+  string inString, outString, lastString; // local to this loop
+  string y = "";
+
+  //read the model from the XML file and create the neural network.
+  FileStorage storage(INPUT_PATH_XML, FileStorage::READ);
+  Ptr<ANN_MLP> nn = Algorithm::read<ANN_MLP>(storage.root());
+  //Ptr<ANN_MLP> nn; // = ANN_MLP::create();
+  
+  //nn->Algorithm::read(storage);
 
 	VideoCapture cap(0); //default camera
 
@@ -101,51 +174,127 @@ int main(int argc, char** argv) {
 
 	while(true) {
 		Mat frame;
-		cap >> frame;
+    cap >> frame;
+    resize(frame, frame, Size(SCENE_SIZE_X, SCENE_SIZE_Y), 0, 0, INTER_AREA);
+		//namedWindow( "Display window", WINDOW_AUTOSIZE );
+		//flip(frame, frame, 1); // Mirror image around the y-axis
 
-		// Create window
-		namedWindow( "Display window", WINDOW_AUTOSIZE );
+    //Detect
+    std::vector<cv::Rect> letterBBoxes1 = detectLetters(frame);
+    unordered_map<int, string> subText;
 
-		// Show frame
-		flip(frame, frame, 1); // Mirror image around the y-axis
-		imshow("Display window",frame);
+    if (letterBBoxes1.size() > 0)
+    {
+      sort(letterBBoxes1.begin(), letterBBoxes1.end(), xposition);
+      // Loop through the found letters
+      for (int i = 0; i < letterBBoxes1.size(); i++)
+      {
+        Mat test_img = frame(letterBBoxes1[i]);
+        Mat output;
+        Mat img_gray, img_sobel, img_threshold, element;
+        GaussianBlur(test_img, output, cv::Size(5, 5), 0);
+        
+        cvtColor(output, img_gray, CV_BGR2GRAY);
+        //Sobel(img_gray, img_sobel, CV_8U, 1, 0, 3, 5, 0, cv::BORDER_DEFAULT);
+        threshold(img_gray, img_threshold, 0, 255, CV_THRESH_OTSU + CV_THRESH_BINARY);
+        //threshold(img_sobel, img_threshold, 150, 255, 0);
+        //element = getStructuringElement(cv::MORPH_RECT, cv::Size(10, 10));
+        //morphologyEx(img_threshold, img_threshold, CV_MOP_CLOSE, element); //Does the trick
 
+        //imshow("Test...", img_threshold);
+        //cvWaitKey(1);
 
-		// Show window until user terminates
-		waitKey(1);
+        Mat scaledDownImage(ATTRIBUTES, ATTRIBUTES, CV_8U, cv::Scalar(0));
+        int pixelValueArray[ALL_ATTRIBUTES];
+        scaleDownImage(img_threshold, scaledDownImage);
+        convertToPixelValueArray(scaledDownImage, pixelValueArray);
+
+        Mat data(1, ALL_ATTRIBUTES, CV_32F);
+        for (int i = 0; i < ALL_ATTRIBUTES; i++){
+          data.at<float>(0, i) = (float)pixelValueArray[i];
+        }
+
+        int maxIndex = 0;
+        cv::Mat classOut(1, CLASSES, CV_32F);
+
+        //prediction
+        nn->predict(data, classOut);
+        float value;
+        float maxValue = classOut.at<float>(0, 0);
+        for (int index = 1; index<CLASSES; index++)
+        {
+          value = classOut.at<float>(0, index);
+          if (value>maxValue)
+          {
+            maxValue = value;
+            maxIndex = index; //maxIndex is the predicted class.
+          }
+        }
+
+        // Check what character we found
+        string text;
+        switch(maxIndex) {
+          case VARIABLE:
+            text = "y";
+            break;
+          case EQUAL:
+            text = "=";
+            break;
+          case ADD:
+            text = "+";
+            break;
+          case SUB:
+            text = "-";
+            break;
+          case MULT:
+            text = "*";
+            break;
+          case DIV:
+            text = "/";
+            break;
+          default:
+            text = to_string(maxIndex);
+            break;
+        }
+
+        subText.insert(make_pair(i, text));
+
+        // Write text (the letter) next to the found letter
+        int fontFace = CV_FONT_HERSHEY_SIMPLEX;
+        double fontScale = 1;
+        int thickness = 2;
+        Point textOrg(letterBBoxes1[i].x + letterBBoxes1[i].width / 2, letterBBoxes1[i].y - 12);
+        putText(frame, text, textOrg, fontFace, fontScale, Scalar::all(55), thickness, 8);
+        rectangle(frame, letterBBoxes1[i], cv::Scalar(0, 255, 0), 3, 8, 0);
+      }
+    }
+
+    inString = "";
+    outString = "";
+    for (int i = 0; i < subText.size(); ++i) {
+      inString.append(subText.find(i)->second);
+    }
+    if(isValid(inString)) {
+        if (lastString != inString)
+          cout << "Read: " << inString << "\n";
+        convert(format(inString), outString);
+        outString = addComma(outString);  
+        y = eval(outString);
+        y.insert(0, " = ");
+        y.insert(0, inString);
+        lastString = inString;
+    }
+
+    // Write text (the letter) next to the found letter
+    int fontFace = CV_FONT_HERSHEY_SIMPLEX;
+    double fontScale = 1.5;
+    int thickness = 2;
+    Point textOrg(3, SCENE_SIZE_Y - 20);
+    putText(frame, y, textOrg, fontFace, fontScale, Scalar::all(55), thickness, 8);
+
+    imshow("Neo - The Equation Solver", frame);
+    cvWaitKey(1);
 	}
-	
-
-	char reply;
- 
-  do {
-  	string inString, outString; // local to this loop
-    string y;
-
-    cout <<"\n    Enter your expression with No spaces!\n\n";
-    cout <<"     e.g. (4+2)*3/2 "<< endl;
-    cout <<"    Unknown variables such as 'a' and 'x' are not allowed:\n\n>>";
-    cin >> inString;
-
-		// Assume the reading of the equation is done, predicted and put into a string called inString.
-		if(isValid(inString)) {
-	      convert(format(inString), outString);
-		    outString = addComma(outString);  
-		    y = eval(outString);
-
-        cout << "\n\nAnswer: y = " << y;
-
-		    cout << endl << "\nDo another (y/n)? ";
-		    cin >> reply;
-		}
-		else {
-		    cout<<"*** Syntax error ***\n";
-		    cout << endl << "Do another (y/n)? ";
-		    cin >> reply;
-		     
-		}          
-  } while(tolower(reply) == 'y');
-
 }
 
 
@@ -157,25 +306,22 @@ bool isValid(string myString) {
 
   // Only valid input for first character is y, digit or -
   if(!isdigit(lastRead) && lastRead != 'y' && lastRead != '-' && lastRead != '(') {
-    cout << "First character in expression is not allowed \n";
   	return false;
   }
 
   // logic of expression
   for(int i = 1; i < myString.length(); i++) {
   	if(lastRead == 'y' && (myString[i] == 'y' || isdigit(myString[i]))) {
-      cout << "Last character was a letter, letter or digit is not allowed \n";
   		return false;
     }
 		else if(isdigit(lastRead) && myString[i] == 'y') {
-      cout << "Last character was a digit, letter is not allowed \n";
 			return false;
     }
 		else if(isOperator(lastRead) && isOperator(myString[i])) {
-      if (myString[i] == '-')
-        continue;
+      if (myString[i] == '-') {
+        return false; //continue;
+      }
       else {
-        cout << "Can't have two operators in succession \n";
         return false;
       }
     }
@@ -219,9 +365,11 @@ bool isValid(string myString) {
   }
 
   if (equal != y || y > 1 || equal > 1) {
-    cout << "Need both = and y in equation or too many y or = in expression \n";
     return false;
   }
+
+  if (myString[myString.length()-1] != 'y' && !isdigit(myString[myString.length()-1]))
+    return false;
 
   return (count == myString.length());          
 }  
@@ -575,6 +723,8 @@ double calc(string temp[]) {
     return (x / y);
   else if (b == "=")
     return pow(x, y);
+  else
+    return x;
 }
 
 

@@ -1,7 +1,7 @@
 
-CXXFLAGS = -c -I/usr/local/Cellar/opencv3/HEAD-e0435d3_4/include/
-
-LFLAGS= -L/usr/local/Cellar/opencv3/HEAD-e0435d3_4/lib/ -lm -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml -lopencv_video -lopencv_videoio -lopencv_imgcodecs
+CXXFLAGS = -c -I/usr/local/Cellar/opencv3/HEAD/include/
+#-e0435d3_4
+LFLAGS= -L/usr/local/Cellar/opencv3/HEAD/lib/ -lm -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml -lopencv_video -lopencv_videoio -lopencv_imgcodecs
 
 all: output preprocessing training
 
