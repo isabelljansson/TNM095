@@ -15,11 +15,12 @@
 
 
 ////////////////////////////////////////
-#define TRAINING_SAMPLES 7			//Number of samples in training dataset
+#define TRAINING_SAMPLES 52			//Number of samples in training dataset
 #define ATTRIBUTES 16				//Number of pixels per sample.
-#define TEST_SAMPLES 7				//Number of samples in test dataset
+#define TEST_SAMPLES 3				//Number of samples in test dataset
 #define CLASSES 16					//Number of distinct characters.
-#define INPUT_PATH "./dataset"
+#define INPUT_PATH_TRAINING "./dataset"
+#define INPUT_PATH_TESTING "./testset"
 #define OUTPUT_PATH_TRAINING "./preprocessed_output/trainingset.txt"
 #define OUTPUT_PATH_TESTING "./preprocessed_output/testset.txt"
 ////////////////////////////////////////
@@ -163,20 +164,38 @@ std::string convertInt(int number)
 	return ss.str();//return a string with the contents of the stream
 }
 
-void readFile(std::string datasetPath, int samplesPerClass, std::string outputfile)
+void readFile(std::string datasetPath, int start, int samplesPerClass, std::string outputfile)
 {
 	std::fstream file(outputfile, std::ios::out);
 	std::string folderName[CLASSES] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
 								"y", "equals", "plus", "minus", "times", "division"};
 
-	for (int sample = 1; sample <= samplesPerClass; sample++)
+	for (int sample = start; sample <= samplesPerClass; sample++)
 	{
 		for (int folder = 0; folder < CLASSES; folder++)
-		{   //creating the file path string
-			std::string imagePath = datasetPath + "/" + folderName[folder] + "/img" +  convertInt(sample) + ".png";
+		{   
+		//creating the file path string
+			std::string imagePath;
+			std::ostringstream im, fold;
+			fold << std::setw( 3 ) << std::setfill( '0' ) << (folder+1);
+		    im << std::setw( 3 ) << std::setfill( '0' ) << sample;
+
+		    if ( (folderName[folder] == "plus" ||
+		    	folderName[folder] == "minus" ||
+		    	folderName[folder] == "equals" ||
+		    	folderName[folder] == "division")  ) {
+
+		    	if (sample < 7)
+			    	imagePath = datasetPath + "/" + folderName[folder] + "/img" +  convertInt(sample) + ".png";
+			    else
+			    	imagePath = datasetPath + "/" + folderName[folder] + "/empty.png";
+		    }
+			else 
+				imagePath = datasetPath + "/" + folderName[folder] + "/img" +  fold.str() + "-" + im.str() + ".png";
+
 			//std::cout << "imagePath: " << imagePath << std::endl;
-			//reading the image
 			
+			//reading the image
 			cv::Mat img = cv::imread(imagePath, 0);
 
 			cv::Mat output;
@@ -215,9 +234,9 @@ void readFile(std::string datasetPath, int samplesPerClass, std::string outputfi
 int main()
 {
 	std::cout << "Reading the training set...\n";
-	readFile(INPUT_PATH, TRAINING_SAMPLES, OUTPUT_PATH_TRAINING);
+	readFile(INPUT_PATH_TRAINING, 4, 55, OUTPUT_PATH_TRAINING);
 	std::cout << "Reading the test set...\n";
-	readFile(INPUT_PATH, TEST_SAMPLES, OUTPUT_PATH_TESTING);
+	readFile(INPUT_PATH_TESTING, 1, 3, OUTPUT_PATH_TESTING);
 	std::cout << "operation completed\n";
 	return 0;
 }

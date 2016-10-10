@@ -84,7 +84,7 @@ string getAnswer(vector<string> array);
 string eval(string);
 
 int main(int argc, char** argv) {
-	/*
+	
 	bool parOpen = false;
 	int lastRead = -1;	// maybe we dont know which character is lastRead, make a vector with all characters?
 	int currRead = -1;
@@ -114,7 +114,7 @@ int main(int argc, char** argv) {
 		// Show window until user terminates
 		waitKey(1);
 	}
-	*/
+	
 
 	char reply;
  

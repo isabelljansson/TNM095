@@ -32,11 +32,11 @@ using namespace ml;
 
 ////////////////////////////////////////
 #define CLASSES 16								//Number of distinct labels.
-#define TRAINING_SAMPLES 7						//Number of samples in training dataset
+#define TRAINING_SAMPLES 52						//Number of samples in training dataset
 #define ALL_TRAINING_SAMPLES (TRAINING_SAMPLES * CLASSES)       //All samples in training dataset
 #define ATTRIBUTES 16							// Number of pixels per sample (16*16)
 #define ALL_ATTRIBUTES (ATTRIBUTES * ATTRIBUTES)  // All pixels per sample.
-#define TEST_SAMPLES 7						//Number of samples in test dataset
+#define TEST_SAMPLES 3						//Number of samples in test dataset
 #define ALL_TEST_SAMPLES (TEST_SAMPLES * CLASSES)				//All samples in test dataset
 #define INPUT_PATH_TRAINING "preprocessed_output/trainingset.txt"
 #define INPUT_PATH_TESTING "preprocessed_output/testset.txt"
@@ -99,13 +99,6 @@ int main()
 	// Create matrices for testing
 	Mat test_set(ALL_TEST_SAMPLES, ALL_ATTRIBUTES, CV_32F); //Test samples
 	Mat test_set_classifications(ALL_TEST_SAMPLES, CLASSES, CV_32F); //index of each test sample
-	
-
-	int outputTrainingDataArray[ALL_TEST_SAMPLES][1];
-
-	for (int i = 0; i < ALL_TEST_SAMPLES; i++){
-		  outputTrainingDataArray[i][0] = (i%CLASSES);
-	}
 
 	// Load training and test sets
 	// Store data in matrices training_set and test_set
@@ -135,7 +128,7 @@ int main()
 	// b: 1.0
 	Ptr<ANN_MLP> nn = ANN_MLP::create();
 	nn->setLayerSizes(layers);
-	nn->setActivationFunction(ANN_MLP::SIGMOID_SYM, 1.0, 1.0);
+	nn->setActivationFunction(ANN_MLP::SIGMOID_SYM, 0.6, 1.0);
 	nn->setTrainMethod(ANN_MLP::BACKPROP);
 	nn->setBackpropMomentumScale(0.1);
 	nn->setBackpropWeightScale(0.1);
@@ -146,11 +139,11 @@ int main()
         1e-6
     );
 	nn->setTermCriteria(termCrit);*/
-	nn->setTermCriteria(TermCriteria(TermCriteria::MAX_ITER, (int)1000, 1e-6));
+	nn->setTermCriteria(TermCriteria(TermCriteria::COUNT + TermCriteria::EPS, (int)1000, 1e-6));
 	
 
 	cout << "Starting training...\n";
-	Ptr<TrainData> tdata = TrainData::create(training_set, ROW_SAMPLE, test_set_classifications);
+	Ptr<TrainData> tdata = TrainData::create(training_set, ROW_SAMPLE, training_set_classifications);
 	nn->train(tdata);
 	cout << "Training completed...\n";
 	//cout << "interations: " << it << "\n";
@@ -196,7 +189,7 @@ int main()
 				maxIndex = index;
 			}
 		}
-		//cout << "Testing Sample: " << tsample << " -> Class result: " << maxIndex << "\n";
+		cout << "Testing Sample: " << tsample%CLASSES << " -> Class result: " << maxIndex << "\n";
 		//Now compare the predicted class to the actural class. if the prediction is correct then\
 		            //test_set_classifications[tsample][ maxIndex] should be 1.
 		//if the classification is wrong, note that.
@@ -214,7 +207,6 @@ int main()
 		else {
 			// otherwise correct
 			correct_class++;
-			cout << tsample << " ";
 			classification_matrix[maxIndex][maxIndex]++;
 		}
 	}
