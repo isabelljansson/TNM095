@@ -1,0 +1,12 @@
+\select@language {english}
+\contentsline {section}{Introduction}{3}{section*.3}
+\contentsline {section}{Theory}{3}{section*.4}
+\contentsline {subsection}{Multilayered perceptron neural network}{3}{section*.5}
+\contentsline {section}{Method}{4}{section*.7}
+\contentsline {subsection}{Preprocessing training set}{5}{section*.8}
+\contentsline {subsection}{Train network}{5}{section*.9}
+\contentsline {subsection}{Application}{6}{section*.10}
+\contentsline {section}{Implementation}{7}{section*.11}
+\contentsline {section}{Results}{7}{section*.12}
+\contentsline {section}{Discussion and conclusion}{8}{section*.15}
+\contentsline {section}{References}{10}{section*.17}
