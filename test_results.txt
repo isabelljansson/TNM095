@@ -1,15 +1,27 @@
-Patch size		Test set 		Training set	Correct guess
+Patch size		Test set 		Training set	Correct guess	Dataset
 				(pics/class)	(pics/class)
-=====================================================================
-8*8				3				3				64%
-8*8				3				4				68%
-8*8				3 (0-9)			52 (0-9)		83%
+====================================================================================
+8*8				3				3				64% 			handwritten
+8*8				3				4				68% 			handwritten
+8*8				3				52 (7)			66% 			handwritten
+8*8				3				1013 (7)		66%				computer fonts
+8*8				100				916 (mdes..)	91%				computer fonts
+8*8				3 (0-9)			52 (endast 0-9)	83% 			handwritten
 
-16*16			3				3				83%
-16*16			3				4				83%
-16*16			3 (0-9)			52 (0-9)		96%
 
-32*32			3				3				81%
-32*32			3				4				79%
-32*32			3 (0-9)			52 (0-9)		86%
+16*16			3				3				83% 			handwritten
+16*16			3				4				83% 			handwritten
+16*16			3				52 (7)			85% 			handwritten
+16*16			3				1013 (7)		62%				computer fonts
+16*16			3				1013 (mdes..)	81%				computer fonts
+16*16			100				916 (mdes..)	96%				computer fonts <--
+16*16			3 (0-9)			52 (endast 0-9)	96% 			handwritten
+
+
+32*32			3				3				81% 			handwritten
+32*32			3				4				79% 			handwritten
+32*32			3				52 (7)			89% 			handwritten
+32*32			3				1013 (7)		77% 			computer fonts
+32*32			100				916 (mdes..)	98%				computer fonts
+32*32			3 (0-9)			52 (endast 0-9)	86% 			handwritten
 

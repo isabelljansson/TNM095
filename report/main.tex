@@ -109,25 +109,25 @@ The MLP is a neural network that consists of three layers; the input layer, the 
 
 \begin{figure}[!ht]
 	\centering
-	\includegraphics[width=0.6\textwidth]{figure.png}
-	\caption{\label{fig:layers} some text about it}
+	\includegraphics[width=0.6\textwidth]{Images/mlp_layers.png}
+	\caption{\label{fig:layers} The layers in the MLP network}
 	\centering
 \end{figure}
 The input values for a layer are summed up with certain weights that are specific for every neuron together with a bias term. This represents the decision that the neuron will take. The weights are calculated by a weight-function, which can be seen in Equation \ref{eq:weight} below. In the equation, $u_i$ is the total input for the layer, $x_j$  is the neuron which will be weighted with $w_{ij}$ , $n$ is the current layer and  $w_i$, bias is the bias term for the neuron \cite{mlp}. 
 
 \begin{equation}
   \label{eq:weight}
-  p(t) = \sum_i c_ib_i(t) %temp
+  u_{i}=\sum_{j}(w_{ij}^{n+1}\cdot x_{j}) + w_{i,bias}^{n+1}
 \end{equation}
 The weight for each neuron is determined by the training algorithm. OpenCV offers two versions of backpropagation as the training algorithm, standard backpropagation and the rprop algorithm which is a direct adaptive method for faster backpropagation learning. The standard backpropagation algorithm, which is used in this project, is the most widely used supervised training method for neural networks. It takes a set of inputs and outputs, $(x_1, y_1)...(x_n,y_n)$, and outputs a sequence of weights. These weights are initially set randomly but are updated during the training. This is done by calculating the gradient of a loss function with respect to all weights in the network. The gradient is used into an optimization method which uses the gradient to update the weights in order to minimize the loss function. 
 \newline
 \newline
-An activation function is then used to transform the ui into the output of the layer, which will be used as the input in the next. The activation function used in this project is the Sigmoid function, which is default in MLP in OpenCV and can be seen in Equation \ref{eq:activate}. In the equation a and b are constants and ui is the input of the layer calculated according to Equation \ref{eq:activate}.
+An activation function is then used to transform the $u_{i}$ into the output $y(u_{i})$  of the layer, which will be used as the input in the next. The activation function used in this project is the Sigmoid function, which is default in MLP in OpenCV and can be seen in Equation \ref{eq:activate}. In the equation $\alpha$ and $\beta$ are constants and $u_{i}$ is the input of the layer calculated according to Equation \ref{eq:weight}.
 
 
 \begin{equation}
   \label{eq:activate}
-  p(t) = \sum_i c_ib_i(t) %temp
+  y(u_{i})= \beta \frac{1 - e^{-\alpha u_{i}}}{1 + e^{-\alpha u_{i}}}
 \end{equation}
 
 
@@ -173,10 +173,10 @@ The training were performed using OpenCV with the Sigmoid function as activation
 \subsection*{Application}
 \addcontentsline{toc}{subsection}{Application}
 
-The application uses the webcam, finds the characters on the screen, predicts their values and calculates the result. The training from the previous stage is loaded into the application from an XML-file. Since the program is run in real-time are some restrictions required concerning the image processing. The frame goes through four steps of filters. Grayscaling the image, applying a Sobel filter to find high intensity areas and highlighting the contours, Otsu’s threshold filter to remove noise and lastly a morphology dilation to fill in gaps to improve the recognition. After that can OpenCV accurately extract where in the frame a character exists and predict it with the network. A more detailed description of the image processing and character search can be read in \cite{kristoffer}.
+The application uses the webcam, finds the characters on the screen, predicts their values and calculates the result. The training from the previous stage is loaded into the application from an XML-file. Since the program is run in real-time are some restrictions required concerning the image processing. The frame goes through four steps of filters. Grayscaling the image, applying a Sobel filter to find high intensity areas and highlighting the contours, Otsu\textquotesingle s threshold filter to remove noise and lastly a morphology dilation to fill in gaps to improve the recognition. After that can OpenCV accurately extract where in the frame a character exists and predict it with the network. A more detailed description of the image processing and character search can be read in \cite{kristoffer}.
 \newline
 \newline
-All characters that has been found in the frame are sorted from left to right to later be sent into the equation solver. Since the solver will receive a new expression in each frame it is important to check if it is a valid expression, else it would quickly cause a crash of the program. The expression has to be valid such that it doesn’t include multiple equals signs, multiple operators after each other as well as start and end with an operand. Once through the validation the expression is translated to a stack principle like Equation \ref{eq:1}.
+All characters that has been found in the frame are sorted from left to right to later be sent into the equation solver. Since the solver will receive a new expression in each frame it is important to check if it is a valid expression, else it would quickly cause a crash of the program. The expression has to be valid such that it does not include multiple equals signs, multiple operators after each other as well as start and end with an operand. Once through the validation the expression is translated to a stack principle like Equation \ref{eq:1}.
 
 \begin{equation}
   \label{eq:1}
@@ -208,47 +208,60 @@ The project is developed in C++ with OpenCV 3.1.0 \cite{opencv}. A Multi-Layered
 The results when using a testing set to test the neural network can be found in Table \ref{table} below. The result when running the actual application varied a lot. Two snapshots from the application can be seen in Figure \ref{fig:result}.
 
 \begin{figure}[!ht]
-	\centering
-	\includegraphics[width=0.6\textwidth]{figure.png}
-	\caption{\label{fig:result} Snapshots from the application}
-	\centering
+    \centering
+    \begin{subfigure}[b]{0.4\textwidth}
+        \includegraphics[width=\textwidth]{Images/bad_result.png}
+        \caption{Wrong prediction of the neural network.}
+        \label{fig:result_bad}
+    \end{subfigure}
+    ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+      %(or a blank line to force the subfigure onto a new line)
+    \begin{subfigure}[b]{0.4\textwidth}
+        \includegraphics[width=\textwidth]{Images/good_result.png}
+        \caption{Correct prediction of the neural network.}
+        \label{fig:result_good}
+    \end{subfigure}
+  
+    \caption{Snapshots from the application}\label{fig:result}
 \end{figure}
 
-% Maybe take away comments?
-\begin{table}[]
-\centering
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{lllll}
-Patch size & Comments & \begin{tabular}[c]{@{}l@{}}Training set\\ (pictures per class)\end{tabular} & Test set(pictures per class) & Correct guess \\
-$8*8$ & Dataset contains handwritten characters. 
-Using characters +,-,/,= as operators & 3 & 3 & 64\% \\
-$8*8$ & Dataset contains handwritten characters. 
-Using characters +,-,/,= as operators. & 52 (7 for operators) & 3 & 66\% \\
-$8*8$ & Dataset contains computer fonts. 
-Using characters +,-,/,= as operators. & 1013 (7 for operators) & 3 & 66\% \\
-$8*8$ & Dataset contains computer fonts. 
-Using characters A,S,D,E as operators. & 916 & 100 & 91\% \\
-$16*16$ & Dataset contains handwritten characters. 
-Using characters +,-,/,= as operators. & 3 & 3 & 89\% \\
-$16*16$ & Dataset contains handwritten characters. 
-Using characters +,-,/,= as operators. & 52 (7 for operators) & 3 & 85\% \\
-$16*16$ & Dataset contains computer fonts. 
-Using characters +,-,/,= as operators. & 1013 (7 for operators) & 3 & 62\% \\
-$16*16$ & Dataset contains computer fonts. 
-Using characters A,S,D,E as operators. & 916 & 100 & 96\% \\
-$32*32$ & Dataset contains handwritten characters. 
-Using characters +,-,/,= as operators. & 3 & 3 & 81\% \\
-$32*32$ & Dataset contains handwritten characters. 
-Using characters +,-,/,= as operators. & 52 (7 for operators) & 3 & 89\% \\
-$32*32$ & Dataset contains computer fonts. 
-Using characters +,-,/,= as operators. & 1013 (7 for operators) & 3 & 77\% \\
-$32*32$ & Dataset contains computer fonts. 
-Using characters A,S,D,E as operators. & 916 & 100 & 98(
-\end{tabular}%
-}
-\caption{\label{table} Results from training}
 
+% Maybe take away comments?
+\begin{table}
+  \begin{tabular}{ | c |  p{5cm} | p{3cm}  |  p{3cm} | p{1.5 cm} | }
+  \hline
+  Patch size & Comments & Training set (pictures per class) & Test set (pictures per class) & Correct guess \\ \hline
+  $8*8$ & Dataset contains handwritten characters. 
+  Using characters $+,-,/,=$ as operators & 3 & 3 & 64\% \\ \hline
+  $8*8$ & Dataset contains handwritten characters. 
+  Using characters $+,-,/,=$ as operators. & 52 (7 for operators) & 3 & 66\% \\ \hline
+  $8*8$ & Dataset contains computer fonts. 
+  Using characters $+,-,/,=$as operators. & 1013 (7 for operators) & 3 & 66\% \\ \hline
+  $8*8$ & Dataset contains computer fonts. 
+  Using characters A,S,D,E as operators. & 916 & 100 & 91\% \\ \hline
+  $16*16$ & Dataset contains handwritten characters. 
+  Using characters $+,-,/,=$as operators. & 3 & 3 & 89\% \\ \hline
+  $16*16$ & Dataset contains handwritten characters. 
+  Using characters $+,-,/,=$ as operators. & 52 (7 for operators) & 3 & 85\% \\ \hline
+  $16*16$ & Dataset contains computer fonts. 
+  Using characters $+,-,/,=$ as operators. & 1013 (7 for operators) & 3 & 62\% \\ \hline
+  $16*16$ & Dataset contains computer fonts. 
+  Using characters A,S,D,E as operators. & 916 & 100 & 96\% \\ \hline
+  $32*32$ & Dataset contains handwritten characters. 
+  Using characters $+,-,/,=$ as operators. & 3 & 3 & 81\% \\ \hline
+  $32*32$ & Dataset contains handwritten characters. 
+  Using characters $+,-,/,=$ as operators. & 52 (7 for operators) & 3 & 89\% \\ \hline
+  $32*32$ & Dataset contains computer fonts. 
+  Using characters $+,-,/,=$ as operators. & 1013 (7 for operators) & 3 & 77\% \\ \hline
+  $32*32$ & Dataset contains computer fonts. 
+  Using characters A,S,D,E as operators. & 916 & 100 & 98\% \\ \hline
+  \end{tabular}%
+  \caption{\label{table} Results from training}
 \end{table}
+
+%\caption{\label{table} Results from training}
+
+%\end{tabular}
 
 \section*{Discussion and conclusion}
 \addcontentsline{toc}{section}{Discussion and conclusion}
