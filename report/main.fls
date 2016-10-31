@@ -266,6 +266,9 @@ INPUT ./Images/bad_result.png
 INPUT Images/good_result.png
 INPUT ./Images/good_result.png
 INPUT ./Images/good_result.png
+INPUT /usr/local/texlive/2015/texmf-dist/fonts/vf/public/fourier/futsy.vf
+INPUT /usr/local/texlive/2015/texmf-dist/fonts/tfm/public/fourier/fourier-ms.tfm
+INPUT /usr/local/texlive/2015/texmf-dist/fonts/tfm/public/fourier/fourier-mcl.tfm
 INPUT /usr/local/texlive/2015/texmf-dist/tex/latex/base/t1cmtt.fd
 INPUT /usr/local/texlive/2015/texmf-dist/tex/latex/base/t1cmtt.fd
 INPUT /usr/local/texlive/2015/texmf-dist/fonts/tfm/jknappen/ec/ectt1200.tfm

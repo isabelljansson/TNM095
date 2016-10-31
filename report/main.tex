@@ -120,6 +120,7 @@ The input values for a layer are summed up with certain weights that are specifi
   \label{eq:weight}
   u_{i}=\sum_{j}(w_{ij}^{n+1}\cdot x_{j}) + w_{i,bias}^{n+1}
 \end{equation}
+
 The weight for each neuron is determined by the training algorithm. OpenCV offers two versions of backpropagation as the training algorithm, standard backpropagation and the rprop algorithm which is a direct adaptive method for faster backpropagation learning. The standard backpropagation algorithm, which is used in this project, is the most widely used supervised training method for neural networks. It takes a set of inputs and outputs, $(x_1, y_1)...(x_n,y_n)$, and outputs a sequence of weights. These weights are initially set randomly but are updated during the training. This is done by calculating the gradient of a loss function with respect to all weights in the network. The gradient is used into an optimization method which uses the gradient to update the weights in order to minimize the loss function. 
 \newline
 \newline
@@ -149,7 +150,7 @@ The project contains three parts:
 \subsection*{Preprocessing training set}
 \addcontentsline{toc}{subsection}{Preprocessing training set}
 
-The dataset contains sample images of the characters $0-9, y, x, D , A, S, E$ which are a part of the $Char74K$ dataset \cite{dataset}. The characters x, D, A, S and E are used for multiplication, division, addition and subtraction respectively and y is used as the unknown character which will be solved from the equation. Letters were used as operators since no free database with $+,-,/$ and $=$ could be found. It has also been tested to create a smaller dataset of seven images of each operator. To still be able to have a bigger dataset for the remaining characters, the algorithm require that all characters have the same amount of training images, white image was used for training the operators when the seven images were done. Since the algorithm will match a character to the most equal one, the empty images will always be less equal to the input then the first seven.  
+The dataset contains sample images of the characters $0-9, y, x, D , A, S, E$ which are a part of the $Char74K$ dataset \cite{dataset}. The characters $x, D, A, S$ and $E$ are used for multiplication, division, addition and subtraction respectively and y is used as the unknown character which will be solved from the equation. Letters were used as operators since no free database with $+,-,/$ and $=$ could be found. It has also been tested to create a smaller dataset of seven images of each operator. To still be able to have a bigger dataset for the remaining characters, the algorithm require that all characters have the same amount of training images, white image was used for training the operators when the seven images were done. Since the algorithm will match a character to the most equal one, the empty images will always be less equal to the input then the first seven.  
 \newline
 \newline
 The dataset contains $1016$ different computer font images of each character where every image is a $128*128$ PNG-image. A part of the dataset is used for training and the remaining images are used for testing the result of the training. The amount of images for each characters that were used for training was varied, see Table \ref{table}.
@@ -166,7 +167,7 @@ The MLP neural network in this project contains three layers. The amount of neur
 \begin{itemize}  
 \item \textbf{Input layer:} The size of all dimensions in an input patch (E.g. a $16*16$ patch gives an input layer of $256$ neurons).
 \item \textbf{Hidden layer:} The size of one dimension of the input patch (E.g. a $16*16$ patch gives a hidden layer of $16$ neurons).
-\item \textbf{Output layer:} The amount of characters that have to be classified (E.g. $0-9, y, x, A, S, D, E$ are 16 characters which gives an output layer of $16$ neurons). \ldots 
+\item \textbf{Output layer:} The amount of characters that have to be classified (E.g. $0-9, y, x, A, S, D, E$ are $16$ characters which gives an output layer of $16$ neurons). 
 \end{itemize}
 The training were performed using OpenCV with the Sigmoid function as activation function. The values for $\alpha$ and $\beta$ were set to $0.6$ and $1.0$ respectively. The weights are calculated by backpropagation, which also is included into OpenCV. The training will end after a maximum of $1000$ iterations or when the error of the loss function is less than $10^{-6}$. For predicting the class of a character, either from the testing set or from the application, the character will be matched to all output classes and the result will be described by a weight. The class corresponding to the highest weight will be the resulting output, which is the decision of the neural network. The result of the training is stored into an XML-file which is imported into the application. 
 
@@ -174,33 +175,35 @@ The training were performed using OpenCV with the Sigmoid function as activation
 \subsection*{Application}
 \addcontentsline{toc}{subsection}{Application}
 
-The application uses the webcam, finds the characters on the screen, predicts their values and calculates the result. The training from the previous stage is loaded into the application from an XML-file. Since the program is run in real-time are some restrictions required concerning the image processing. The frame goes through four steps of filters. Grayscaling the image, applying a Sobel filter to find high intensity areas and highlighting the contours, Otsu\textquotesingle s threshold filter to remove noise and lastly a morphology dilation to fill in gaps to improve the recognition. After that can OpenCV accurately extract where in the frame a character exists and predict it with the network. A more detailed description of the image processing and character search can be read in \cite{kristoffer}.
+
+The application uses the webcam, finds the characters on the screen, predicts their values and calculates the result. The training from the previous stage is loaded into the application from an XML-file. Since the program is run in real-time are some restrictions required concerning the image processing. The frame goes through four steps of filters. Grayscaling the image, applying a Sobel filter to find high intensity areas and highlighting the contours, Otsu\textquotesingle s threshold filter to remove noise and lastly a morphology dilation to fill in gaps to improve the recognition. After that can OpenCV accurately extract where in the frame a character exists and predict it with the network. A more detailed description of the image processing and character search can be read in Kristofer Janukiewicz paper \cite{kristofer}.
 \newline
 \newline
-All characters that has been found in the frame are sorted from left to right to later be sent into the equation solver. Since the solver will receive a new expression in each frame it is important to check if it is a valid expression, else it would quickly cause a crash of the program. The expression has to be valid such that it does not include multiple equals signs, multiple operators after each other as well as start and end with an operand. Once through the validation the expression is translated to a stack principle like Equation \ref{eq:1}.
+All characters that has been found in the frame are sorted from left to right to later be sent into the equation solver. Since the solver will receive a new expression in each frame it is important to check if it is a valid expression, else it would quickly cause a crash of the program. The expression has to be valid such that it doesn't include multiple equals signs, multiple operators after each other as well as start and end with an operand. Once through the validation the expression is translated to a stack principle like Equation \ref{eq:1}.
+
 
 \begin{equation}
   \label{eq:1}
-  p(t) = \sum_i c_ib_i(t) %temp
+  \overbrace{ y \cdot 2+\frac{5}{2}=10-3 \cdot 2}^{original \ expression} \ \ \to \ \ \underbrace{y,2,\cdot,5,2,\div,+,=10,3,2,\cdot,-}_{stack \ expression}
 \end{equation}
 The operands are placed on top of the stack followed by an operator. The precedence is respected by placing the preceding operator on top of the other on the stack. The expression is then split into three parts, $C$, $L$ and $R$. $C$ is the opposing side of where the $y$ exists, $L$ is the left side of the variable and $R$ the right side.
 
 \begin{equation}
   \label{eq:2}
-  p(t) = \sum_i c_ib_i(t) %temp
+  \overbrace{}^{L}y, \underbrace{2, \cdot ,5,2,\div,+}_{R} \ = \ \overbrace{10,3,2, \cdot ,-}^{C} \ \ \to \ \ y \ = \ C,L,-,R'
 \end{equation}
 If the expression does not include any equal sign or variable are $L$ and $R$ both equal to $0$. The $C$ and $L$ can be computed separately due to the structure of the stack. The original equation is then reordered such that the variable is empty on one side, like Equation \ref{eq:2}. The operators in the $R$-part requires to be looked over, however in what way depends on the structure of the original expression. Addition and subtraction operators are inverted while multiplication and division kept the same. If the very first operator in $R$ is either multiplication or division will that one be inverted as well but placed at the bottom of the stack together with its operand. This process is repeated until an addition or subtraction operator is found. If the variable was negative will the computed result be divided by $-1$. Equation \ref{eq:1} will turn into:
 
 \begin{equation}
   \label{eq:3}
-  p(t) = \sum_i c_ib_i(t) %temp
+  C,L,-,R' \ \ \iff \ \  \overbrace{10,3,2,\cdot,-}^{C \ = \ 4},\underbrace{0}_{L},-,\overbrace{5,2,\div,-,2,\div}^{R'} \ \ \iff \ \ \frac{(4-\frac{5}{2})}{2} \ \ \iff \ \ \frac{3}{4} \ = \ y
 \end{equation}
 
 
 \section*{Implementation}
 \addcontentsline{toc}{section}{Implementation}
 
-The project is developed in C++ with OpenCV 3.1.0 \cite{opencv}. A Multi-Layered Perceptron neural network was used for machine learning, which is included in OpenCV.  The code is compiled with the GNU C++ Compiler with OpenCV flags.  The character images are downloaded from The Chars74K dataset \cite{dataset}.
+The project is developed in C++ with OpenCV 3.1.0 \cite{opencv}. A Multi-Layered Perceptron neural network was used for machine learning, which is included in OpenCV.  The code is compiled with the GNU C++ Compiler with OpenCV flags.  The character images are downloaded from the Chars74K dataset \cite{dataset}.
 
 
 \section*{Results}
@@ -266,7 +269,7 @@ Using characters $A,S,D,E$ as operators.\end{tabular} & $916$ & $100$ & $98\%$ \
 \section*{Discussion and conclusion}
 \addcontentsline{toc}{section}{Discussion and conclusion}
 
-The biggest contributing factors for errors in the character predictions are the quality of the webcam as well as the light settings in the room when the application is running. The better the original picture the better will the recognition work. In the development of this application was five years old integrated laptop webcams used in a gloomy lit room. This results in more noise in an order of magnitude, making Otsu’s threshold filter not enough to remove all outlines but the contours from the characters. Slight orientation differences between the camera and the paper on which the characters are written can also affect prediction accuracy in a big way. Another issue is the MLP neural network as it has troubles identifying this many different characters, especially since many of them share a lot of similarities. A idea could be to change the number of hidden layers, however it can be difficult to find the optimal number. If the data is linearly separable then hidden layers are not needed, and even if not is the improved performance negligible in most applications. 
+The biggest contributing factors for errors in the character predictions are the quality of the webcam as well as the light settings in the room when the application is running. The better the original picture the better will the recognition work. In the development of this application was five years old integrated laptop webcams used in a gloomy lit room. This results in more noise in an order of magnitude, making Otsu's threshold filter not enough to remove all outlines but the contours from the characters. Slight orientation differences between the camera and the paper on which the characters are written can also affect prediction accuracy in a big way. Another issue is the MLP neural network as it has troubles identifying this many different characters, especially since many of them share a lot of similarities. A idea could be to change the number of hidden layers, however it can be difficult to find the optimal number. If the data is linearly separable then hidden layers are not needed, and even if not is the improved performance negligible in most applications. 
 \newline
 \newline
 The MLP uses a backpropagation algorithm to train, as is the standard for any supervised learning. There is an application developed by Alistar Dobke and Mark Mann which is also using a feed forward MLP neural network but trained with a conjugate scaled gradient backpropagation. The application is developed for mobile Android devices and is a simple calculator as it only contains the addition and subtraction operators and no variable. Though the application is simpler than the application developed in this project, it seems to have achieved more reliable results \cite{app}, however it were unable to prove since the application was unresponsive. Using another training set could also make handwritten character predictions more reliable. This was clear after seeing the improvement by swapping from a small dataset of handwritten characters to a much larger one with computer written characters. The result from the test set will vary depending on the size of the training set. If a small training set is used, it is likely that the training set will not be a good representation of the real data set. Since if the training set is small, a wrong classification has a bigger impact on the result which is the case when using only three testing images. A $2\%$ increase were achieved in accuracy using $32*32$ patch size over $16*16$, although that improvement is rather small compared to the improvement between $16*16$ and $8*8$ patch sizes. Using $32*32$ is four times as computationally heavy as $16*16$, however since the training is only done once and not tied to the output application is that irrelevant to the user. 
@@ -292,7 +295,7 @@ The prediction of the MLP neural network can be improved in numerous different w
 \bibitem{preprocessing} Preprocessing of the dataset, Kristoffer Janukiewics,  
 \url{https://github.com/KristoferJanukiewicz/Neural-Network-Approach-for-Optical-Character-Recognition/blob/master/Preprocessing.cpp}, 2016-10-11 
 
-\bibitem{kristoffer} Neural Network, Multi-Layered Perceptron, Image Processing and Computer Vision, Kristofer Janukiewicz, \url{http://weber.itn.liu.se/~piede/courses/tnm095/archive/2015/p2.pdf}, 2015-11-09
+\bibitem{kristofer} Neural Network, Multi-Layered Perceptron, Image Processing and Computer Vision, Kristofer Janukiewicz, \url{http://weber.itn.liu.se/~piede/courses/tnm095/archive/2015/p2.pdf}, 2015-11-09
 
 \bibitem{opencv} OpenCV 3.1.0, OpenCV Dev. Team, \url{http://docs.opencv.org/3.1.0/index.html}, 2016-10-11
 
