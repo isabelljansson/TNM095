@@ -53,7 +53,7 @@
 \pagestyle{fancy}
 \fancyhf{}
 \setlength\headheight{15pt}
-\fancyhead[L]{Jonathan Bosson, Isabell Jansson}
+\fancyhead[L]{jonbo665@student.liu.se, isaja187@student.liu.se}
 \fancyhead[R]{Link\"oping University}
 \fancyfoot[R]{Page \thepage\ of \pageref{LastPage}}
 %-------------------------------------------------------------------------------
@@ -79,6 +79,7 @@
 
 
 \section*{Abstract}
+This report discusses techniques used when developing an interactive equation solver which calculates the result from a handwritten equation read by a web camera. The application uses optical character recognition and a multilayered perceptron neural network. The training of the application is tested with a test set and gives a result of 98\%, but the real-time application is sensitive and the result varies depending on several conditions, such as how characters are written and light conditions.  
 \newpage
 
 \tableofcontents
@@ -176,7 +177,7 @@ The training were performed using OpenCV with the Sigmoid function as activation
 \addcontentsline{toc}{subsection}{Application}
 
 
-The application uses the webcam, finds the characters on the screen, predicts their values and calculates the result. The training from the previous stage is loaded into the application from an XML-file. Since the program is run in real-time are some restrictions required concerning the image processing. The frame goes through four steps of filters. Grayscaling the image, applying a Sobel filter to find high intensity areas and highlighting the contours, Otsu\textquotesingle s threshold filter to remove noise and lastly a morphology dilation to fill in gaps to improve the recognition. After that can OpenCV accurately extract where in the frame a character exists and predict it with the network. A more detailed description of the image processing and character search can be read in Kristofer Janukiewicz paper \cite{kristofer}.
+The application uses the webcam, finds the characters on the screen, predicts their values and calculates the result. The training from the previous stage is loaded into the application from an XML-file. Since the program is run in real-time are some restrictions required concerning the image processing. The frame goes through four steps of filters. Grayscaling the image, applying a Sobel filter to find high intensity areas and highlighting the contours, Otsu\textquotesingle s threshold filter to remove noise and lastly a morphology dilation to fill in gaps to improve the recognition. After that can OpenCV accurately extract where in the frame a character exists and predict it with the network. A more detailed description of the image processing and character search can be read in Kristofer Janukiewicz's paper \cite{kristofer}.
 \newline
 \newline
 All characters that has been found in the frame are sorted from left to right to later be sent into the equation solver. Since the solver will receive a new expression in each frame it is important to check if it is a valid expression, else it would quickly cause a crash of the program. The expression has to be valid such that it doesn't include multiple equals signs, multiple operators after each other as well as start and end with an operand. Once through the validation the expression is translated to a stack principle like Equation \ref{eq:1}.
