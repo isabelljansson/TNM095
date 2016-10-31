@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2016.3.3)  30 OCT 2016 11:11
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2016.3.3)  31 OCT 2016 09:51
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -401,6 +401,14 @@ Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 Package: lipsum 2014/07/27 v1.3 150 paragraphs of Lorem Ipsum dummy text
 \c@lips@count=\count103
 )
+(/usr/local/texlive/2015/texmf-dist/tex/latex/tools/array.sty
+Package: array 2014/10/28 v2.4c Tabular extension package (FMi)
+\col@sep=\dimen137
+\extrarowheight=\dimen138
+\NC@list=\toks18
+\extratabsurround=\skip54
+\backup@length=\skip55
+)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/hyperref/hyperref.sty
 Package: hyperref 2012/11/06 v6.83m Hypertext links for LaTeX
 
@@ -453,7 +461,7 @@ Package: auxhook 2011/03/04 v1.3 Hooks for auxiliary files (HO)
 (/usr/local/texlive/2015/texmf-dist/tex/latex/oberdiek/kvoptions.sty
 Package: kvoptions 2011/06/30 v3.11 Key value format for package options (HO)
 )
-\@linkdim=\dimen137
+\@linkdim=\dimen139
 \Hy@linkcounter=\count104
 \Hy@pagecounter=\count105
 
@@ -482,10 +490,10 @@ Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
 Package hyperref Info: Bookmarks ON on input line 4688.
 \c@Hy@tempcnt=\count107
 LaTeX Info: Redefining \url on input line 5041.
-\XeTeXLinkMargin=\dimen138
+\XeTeXLinkMargin=\dimen140
 \Fld@menulength=\count108
-\Field@Width=\dimen139
-\Fld@charsize=\dimen140
+\Field@Width=\dimen141
+\Fld@charsize=\dimen142
 Package hyperref Info: Hyper figures OFF on input line 6295.
 Package hyperref Info: Link nesting OFF on input line 6300.
 Package hyperref Info: Hyper index ON on input line 6303.
@@ -512,61 +520,61 @@ Package: rerunfilecheck 2011/04/15 v1.7 Rerun checks for auxiliary files (HO)
 Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 82.
 )
-\Hy@SectionHShift=\skip54
+\Hy@SectionHShift=\skip56
 )
-Package hyperref Info: Option `colorlinks' set `true' on input line 42.
-Package hyperref Info: Option `pageanchor' set `true' on input line 42.
-Package hyperref Info: Option `plainpages' set `false' on input line 42.
-Package hyperref Info: Option `linktocpage' set `true' on input line 42.
+Package hyperref Info: Option `colorlinks' set `true' on input line 43.
+Package hyperref Info: Option `pageanchor' set `true' on input line 43.
+Package hyperref Info: Option `plainpages' set `false' on input line 43.
+Package hyperref Info: Option `linktocpage' set `true' on input line 43.
 
 (./main.aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 62.
-LaTeX Font Info:    ... okay on input line 62.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 62.
-LaTeX Font Info:    ... okay on input line 62.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 62.
-LaTeX Font Info:    ... okay on input line 62.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 62.
-LaTeX Font Info:    ... okay on input line 62.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 62.
-LaTeX Font Info:    ... okay on input line 62.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 62.
-LaTeX Font Info:    ... okay on input line 62.
-LaTeX Font Info:    Checking defaults for FML/futm/m/it on input line 62.
-LaTeX Font Info:    Try loading font information for FML+futm on input line 62.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 63.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 63.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 63.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 63.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 63.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 63.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for FML/futm/m/it on input line 63.
+LaTeX Font Info:    Try loading font information for FML+futm on input line 63.
 
  (/usr/local/texlive/2015/texmf-dist/tex/latex/fourier/fmlfutm.fd
 File: fmlfutm.fd 2004/10/30 Fontinst v1.926 font definitions for FML/futm.
 )
-LaTeX Font Info:    ... okay on input line 62.
-LaTeX Font Info:    Checking defaults for FMS/futm/m/n on input line 62.
-LaTeX Font Info:    Try loading font information for FMS+futm on input line 62.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for FMS/futm/m/n on input line 63.
+LaTeX Font Info:    Try loading font information for FMS+futm on input line 63.
 
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/fourier/fmsfutm.fd
 File: fmsfutm.fd 2004/10/30 Fontinst v1.926 font definitions for FMS/futm.
 )
-LaTeX Font Info:    ... okay on input line 62.
-LaTeX Font Info:    Checking defaults for FMX/futm/m/n on input line 62.
-LaTeX Font Info:    Try loading font information for FMX+futm on input line 62.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for FMX/futm/m/n on input line 63.
+LaTeX Font Info:    Try loading font information for FMX+futm on input line 63.
 
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/fourier/fmxfutm.fd
 File: fmxfutm.fd futm-extension
 )
-LaTeX Font Info:    ... okay on input line 62.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 62.
-LaTeX Font Info:    Try loading font information for TS1+cmr on input line 62.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 63.
+LaTeX Font Info:    Try loading font information for TS1+cmr on input line 63.
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/base/ts1cmr.fd
 File: ts1cmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
-LaTeX Font Info:    ... okay on input line 62.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 62.
-LaTeX Font Info:    ... okay on input line 62.
-LaTeX Font Info:    Try loading font information for T1+futs on input line 62.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 63.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Try loading font information for T1+futs on input line 63.
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/fourier/t1futs.fd
 File: t1futs.fd 2004/03/02 Fontinst v1.926 font definitions for T1/futs.
@@ -607,20 +615,20 @@ File: t1futs.fd 2004/03/02 Fontinst v1.926 font definitions for T1/futs.
 
 Package lastpage Info: Please have a look at the pageslts package at
 (lastpage)             https://www.ctan.org/pkg/pageslts
-(lastpage)             ! on input line 62.
+(lastpage)             ! on input line 63.
 (/usr/local/texlive/2015/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count114
-\scratchdimen=\dimen141
+\scratchdimen=\dimen143
 \scratchbox=\box27
 \nofMPsegments=\count115
 \nofMParguments=\count116
-\everyMPshowfont=\toks18
+\everyMPshowfont=\toks19
 \MPscratchCnt=\count117
-\MPscratchDim=\dimen142
+\MPscratchDim=\dimen144
 \MPnumerator=\count118
 \makeMPintoPDFobject=\count119
-\everyMPtoPDFconversion=\toks19
+\everyMPtoPDFconversion=\toks20
 ) (/usr/local/texlive/2015/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
 Package: epstopdf-base 2010/02/09 v2.5 Base part for package epstopdf
 
@@ -639,7 +647,7 @@ e
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: hyperref package is loaded.
 Package caption Info: End \AtBeginDocument code.
-LaTeX Info: Redefining \microtypecontext on input line 62.
+LaTeX Info: Redefining \microtypecontext on input line 63.
 Package microtype Info: Generating PDF output.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using default protrusion set `alltext'.
@@ -663,7 +671,7 @@ File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
 )
 Package color Info: Driver file: pdftex.def on input line 142.
 )
-Package hyperref Info: Link coloring ON on input line 62.
+Package hyperref Info: Link coloring ON on input line 63.
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
@@ -673,47 +681,47 @@ Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
 )
 \c@section@level=\count120
 )
-LaTeX Info: Redefining \ref on input line 62.
-LaTeX Info: Redefining \pageref on input line 62.
-LaTeX Info: Redefining \nameref on input line 62.
+LaTeX Info: Redefining \ref on input line 63.
+LaTeX Info: Redefining \pageref on input line 63.
+LaTeX Info: Redefining \nameref on input line 63.
 
 (./main.out) (./main.out)
 \@outlinefile=\write3
 \openout3 = `main.out'.
 
 LaTeX Font Info:    Font shape `T1/futs/bx/n' in size <12> not available
-(Font)              Font shape `T1/futs/b/n' tried instead on input line 78.
-LaTeX Font Info:    Try loading font information for FML+futmi on input line 78
+(Font)              Font shape `T1/futs/b/n' tried instead on input line 79.
+LaTeX Font Info:    Try loading font information for FML+futmi on input line 79
 .
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/fourier/fmlfutmi.fd
 File: fmlfutmi.fd 2004/10/30 Fontinst v1.926 font definitions for FML/futmi.
 )
 LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
-(Font)              scaled to size 13.24796pt on input line 78.
+(Font)              scaled to size 13.24796pt on input line 79.
 LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
-(Font)              scaled to size 9.19998pt on input line 78.
+(Font)              scaled to size 9.19998pt on input line 79.
 LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
-(Font)              scaled to size 7.35999pt on input line 78.
+(Font)              scaled to size 7.35999pt on input line 79.
 LaTeX Font Info:    Font shape `U/futm/m/n' will be
-(Font)              scaled to size 13.24796pt on input line 78.
+(Font)              scaled to size 13.24796pt on input line 79.
 LaTeX Font Info:    Font shape `U/futm/m/n' will be
-(Font)              scaled to size 9.19998pt on input line 78.
+(Font)              scaled to size 9.19998pt on input line 79.
 LaTeX Font Info:    Font shape `U/futm/m/n' will be
-(Font)              scaled to size 7.35999pt on input line 78.
+(Font)              scaled to size 7.35999pt on input line 79.
  [1
 
 {/usr/local/texlive/2015/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
 LaTeX Font Info:    Font shape `T1/futs/bx/n' in size <17.28> not available
-(Font)              Font shape `T1/futs/b/n' tried instead on input line 80.
+(Font)              Font shape `T1/futs/b/n' tried instead on input line 81.
 pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has 
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.81 \newpage
+l.82 \newpage
               [1]
 LaTeX Font Info:    Font shape `T1/futs/bx/n' in size <24.88> not available
-(Font)              Font shape `T1/futs/b/n' tried instead on input line 83.
+(Font)              Font shape `T1/futs/b/n' tried instead on input line 84.
  (./main.toc
 LaTeX Font Info:    Font shape `FMX/futm/m/n' will be
 (Font)              scaled to size 11.03998pt on input line 2.
@@ -735,25 +743,25 @@ LaTeX Font Info:    Font shape `U/futm/m/n' will be
 
 ]
 LaTeX Font Info:    Font shape `T1/futs/bx/sc' in size <17.28> not available
-(Font)              Font shape `T1/futs/b/sc' tried instead on input line 95.
+(Font)              Font shape `T1/futs/b/sc' tried instead on input line 96.
 LaTeX Font Info:    Font shape `T1/futs/bx/n' in size <14.4> not available
-(Font)              Font shape `T1/futs/b/n' tried instead on input line 105.
+(Font)              Font shape `T1/futs/b/n' tried instead on input line 106.
 
 <Images/mlp_layers.png, id=78, 363.2772pt x 198.7425pt>
 File: Images/mlp_layers.png Graphic file (type png)
 
 <use Images/mlp_layers.png>
-Package pdftex.def Info: Images/mlp_layers.png used on input line 112.
+Package pdftex.def Info: Images/mlp_layers.png used on input line 113.
 (pdftex.def)             Requested size: 271.7835pt x 148.69865pt.
 LaTeX Font Info:    Font shape `T1/futs/bx/n' in size <10.95> not available
-(Font)              Font shape `T1/futs/b/n' tried instead on input line 113.
+(Font)              Font shape `T1/futs/b/n' tried instead on input line 114.
 
-Underfull \hbox (badness 10000) in paragraph at lines 121--126
+Underfull \hbox (badness 10000) in paragraph at lines 122--127
 
  []
 
 [3 <./Images/mlp_layers.png (PNG copy)>]
-LaTeX Font Info:    Try loading font information for TS1+futs on input line 141
+LaTeX Font Info:    Try loading font information for TS1+futs on input line 142
 .
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/fourier/ts1futs.fd
@@ -764,24 +772,24 @@ Package microtype Info: Loading generic settings for font family
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
 
-Underfull \hbox (badness 10000) in paragraph at lines 151--158
+Underfull \hbox (badness 10000) in paragraph at lines 152--159
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 151--158
+Underfull \hbox (badness 10000) in paragraph at lines 152--159
 
  []
 
 [4] [5]
-Overfull \hbox (5.68085pt too wide) in paragraph at lines 168--169
+Overfull \hbox (5.68085pt too wide) in paragraph at lines 169--170
 []\T1/futs/b/n/12 Output layer: \T1/futs/m/n/12 (-20) The amount of char-ac-ter
 s that have to be clas-si-fied (E.g. $0 \FMS/futm/m/n/12 ^^@ \T1/futs/m/n/12 (-
 20) 9\FML/futmi/m/it/12 ; y; x; A; S; D; E$
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 176--180
+Underfull \hbox (badness 10000) in paragraph at lines 177--181
 
  []
 
@@ -789,69 +797,19 @@ Underfull \hbox (badness 10000) in paragraph at lines 176--180
 File: Images/bad_result.png Graphic file (type png)
 
 <use Images/bad_result.png>
-Package pdftex.def Info: Images/bad_result.png used on input line 213.
+Package pdftex.def Info: Images/bad_result.png used on input line 214.
 (pdftex.def)             Requested size: 181.18439pt x 108.33318pt.
 
 <Images/good_result.png, id=130, 854.19125pt x 475.7775pt>
 File: Images/good_result.png Graphic file (type png)
 
 <use Images/good_result.png>
-Package pdftex.def Info: Images/good_result.png used on input line 220.
+Package pdftex.def Info: Images/good_result.png used on input line 221.
 (pdftex.def)             Requested size: 181.18439pt x 100.91806pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 233--233
-[]\T1/futs/m/n/12 (+20) Correct
- []
 
-
-Underfull \hbox (badness 1132) in paragraph at lines 237--237
-[]\T1/futs/m/n/12 (+20) 52 (7 for op-er-a-
- []
-
-
-Underfull \hbox (badness 7981) in paragraph at lines 238--239
-\T1/futs/m/n/12 (+20) fonts. Us-ing char-ac-ters
- []
-
-
-Underfull \hbox (badness 7981) in paragraph at lines 240--241
-\T1/futs/m/n/12 (+20) fonts. Us-ing char-ac-ters
- []
-
-
-Underfull \hbox (badness 1132) in paragraph at lines 245--245
-[]\T1/futs/m/n/12 (+20) 52 (7 for op-er-a-
- []
-
-
-Underfull \hbox (badness 7981) in paragraph at lines 246--247
-\T1/futs/m/n/12 (+20) fonts. Us-ing char-ac-ters
- []
-
-
-Underfull \hbox (badness 7981) in paragraph at lines 248--249
-\T1/futs/m/n/12 (+20) fonts. Us-ing char-ac-ters
- []
-
-
-Underfull \hbox (badness 1132) in paragraph at lines 253--253
-[]\T1/futs/m/n/12 (+20) 52 (7 for op-er-a-
- []
-
-
-Underfull \hbox (badness 7981) in paragraph at lines 254--255
-\T1/futs/m/n/12 (+20) fonts. Us-ing char-ac-ters
- []
-
-
-Underfull \hbox (badness 7981) in paragraph at lines 256--257
-\T1/futs/m/n/12 (+20) fonts. Us-ing char-ac-ters
- []
-
-
-Overfull \hbox (12.07144pt too wide) in paragraph at lines 231--259
-[][] 
- []
+LaTeX Warning: No positions in optional float specifier.
+               Default added (so using `tbp') on input line 230.
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 269--276
@@ -863,7 +821,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 269--276
 
  []
 
-[7] [8] [9 <./Images/bad_result.png> <./Images/good_result.png>] [10]
+[7] [8 <./Images/bad_result.png> <./Images/good_result.png>] [9]
 LaTeX Font Info:    Try loading font information for T1+cmtt on input line 288.
 
 
@@ -900,7 +858,7 @@ Underfull \hbox (badness 3271) in paragraph at lines 295--296
 
 
 AED: lastpage setting LastPage
-[11
+[10
 
 ]
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 305.
@@ -913,13 +871,13 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 305.
  ) 
 Here is how much of TeX's memory you used:
- 10225 strings out of 493089
- 157493 string characters out of 6134843
- 390844 words of memory out of 5000000
- 13317 multiletter control sequences out of 15000+600000
+ 10267 strings out of 493089
+ 158038 string characters out of 6134843
+ 388543 words of memory out of 5000000
+ 13357 multiletter control sequences out of 15000+600000
  118461 words of font info for 220 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 42i,11n,43p,1659b,477s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 42i,16n,43p,1659b,477s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2015/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}
 {/usr/local/texlive/2015/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/tex
 live/2015/texmf-dist/fonts/type1/public/fourier/fourier-mex.pfb></usr/local/tex
@@ -929,10 +887,10 @@ live/2015/texmf-dist/fonts/type1/adobe/utopia/putb8a.pfb></usr/local/texlive/20
 15/texmf-dist/fonts/type1/adobe/utopia/putr8a.pfb></usr/local/texlive/2015/texm
 f-dist/fonts/type1/adobe/utopia/putri8a.pfb></usr/local/texlive/2015/texmf-dist
 /fonts/type1/public/cm-super/sftt1200.pfb>
-Output written on main.pdf (12 pages, 727581 bytes).
+Output written on main.pdf (11 pages, 727334 bytes).
 PDF statistics:
- 215 PDF objects out of 1000 (max. 8388607)
- 187 compressed objects within 2 object streams
- 40 named destinations out of 1000 (max. 500000)
+ 210 PDF objects out of 1000 (max. 8388607)
+ 183 compressed objects within 2 object streams
+ 39 named destinations out of 1000 (max. 500000)
  28264 words of extra memory for PDF output out of 29859 (max. 10000000)
 

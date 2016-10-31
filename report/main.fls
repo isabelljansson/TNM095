@@ -87,6 +87,8 @@ INPUT /usr/local/texlive/2015/texmf-dist/tex/latex/url/url.sty
 INPUT /usr/local/texlive/2015/texmf-dist/tex/latex/url/url.sty
 INPUT /usr/local/texlive/2015/texmf-dist/tex/latex/lipsum/lipsum.sty
 INPUT /usr/local/texlive/2015/texmf-dist/tex/latex/lipsum/lipsum.sty
+INPUT /usr/local/texlive/2015/texmf-dist/tex/latex/tools/array.sty
+INPUT /usr/local/texlive/2015/texmf-dist/tex/latex/tools/array.sty
 INPUT /usr/local/texlive/2015/texmf-dist/tex/latex/hyperref/hyperref.sty
 INPUT /usr/local/texlive/2015/texmf-dist/tex/latex/hyperref/hyperref.sty
 INPUT /usr/local/texlive/2015/texmf-dist/tex/generic/oberdiek/hobsub-hyperref.sty

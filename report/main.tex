@@ -24,6 +24,7 @@
 \usepackage[english]{babel}
 \usepackage{sectsty}
 \usepackage{url, lipsum}
+\usepackage{array}
 
 %% This turns references into clickable hyperlinks.
 \usepackage[bookmarks,backref=true,linkcolor=black]{hyperref} %,colorlinks
@@ -226,42 +227,41 @@ The results when using a testing set to test the neural network can be found in 
 \end{figure}
 
 
-% Maybe take away comments?
-\begin{table}
-  \begin{tabular}{ | c |  p{5cm} | p{3cm}  |  p{3cm} | p{1.5 cm} | }
-  \hline
-  Patch size & Comments & Training set (pictures per class) & Test set (pictures per class) & Correct guess \\ \hline
-  $8*8$ & Dataset contains handwritten characters. 
-  Using characters $+,-,/,=$ as operators & 3 & 3 & 64\% \\ \hline
-  $8*8$ & Dataset contains handwritten characters. 
-  Using characters $+,-,/,=$ as operators. & 52 (7 for operators) & 3 & 66\% \\ \hline
-  $8*8$ & Dataset contains computer fonts. 
-  Using characters $+,-,/,=$as operators. & 1013 (7 for operators) & 3 & 66\% \\ \hline
-  $8*8$ & Dataset contains computer fonts. 
-  Using characters A,S,D,E as operators. & 916 & 100 & 91\% \\ \hline
-  $16*16$ & Dataset contains handwritten characters. 
-  Using characters $+,-,/,=$as operators. & 3 & 3 & 89\% \\ \hline
-  $16*16$ & Dataset contains handwritten characters. 
-  Using characters $+,-,/,=$ as operators. & 52 (7 for operators) & 3 & 85\% \\ \hline
-  $16*16$ & Dataset contains computer fonts. 
-  Using characters $+,-,/,=$ as operators. & 1013 (7 for operators) & 3 & 62\% \\ \hline
-  $16*16$ & Dataset contains computer fonts. 
-  Using characters A,S,D,E as operators. & 916 & 100 & 96\% \\ \hline
-  $32*32$ & Dataset contains handwritten characters. 
-  Using characters $+,-,/,=$ as operators. & 3 & 3 & 81\% \\ \hline
-  $32*32$ & Dataset contains handwritten characters. 
-  Using characters $+,-,/,=$ as operators. & 52 (7 for operators) & 3 & 89\% \\ \hline
-  $32*32$ & Dataset contains computer fonts. 
-  Using characters $+,-,/,=$ as operators. & 1013 (7 for operators) & 3 & 77\% \\ \hline
-  $32*32$ & Dataset contains computer fonts. 
-  Using characters A,S,D,E as operators. & 916 & 100 & 98\% \\ \hline
-  \end{tabular}%
-  \caption{\label{table} Results from training}
+\begin{table}[]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{|c|l|r|r|r|}
+\hline
+\textbf{Patch size} & \textbf{Comments} & \begin{tabular}[c]{@{}l@{}}\textbf{Training set}\\ \textbf{(pictures per class)}\end{tabular} & \begin{tabular}[c]{@{}l@{}}\textbf{Test set} \\ \textbf{(pictures per class)}\end{tabular} & \textbf{Correct guess} \\ \hline
+$8*8$ & \begin{tabular}[c]{@{}l@{}}Dataset contains handwritten characters. \\
+Using characters $+,-,/,=$ as operators\end{tabular} & $3$ & $3$ & $64\%$  \\ \hline
+$8*8$ & \begin{tabular}[c]{@{}l@{}}Dataset contains handwritten characters. \\
+Using characters $+,-,/,=$ as operators.\end{tabular} & $52$ ($7$ for operators) & $3$ & $66\%$ \\ \hline
+$8*8$ & \begin{tabular}[c]{@{}l@{}}Dataset contains computer fonts. \\
+Using characters $+,-,/,=$ as operators.\end{tabular} & $1013$ ($7$ for operators) & $3$ & $66\%$ \\ \hline
+$8*8$ & \begin{tabular}[c]{@{}l@{}}Dataset contains computer fonts. \\
+Using characters $A,S,D,E$ as operators.\end{tabular} & $916$ & $100$ & $91\%$ \\ \hline
+$16*16$ & \begin{tabular}[c]{@{}l@{}}Dataset contains handwritten characters. \\
+Using characters $+,-,/,=$ as operators.\end{tabular} & $3$ & $3$ & $89\%$ \\ \hline
+$16*16$ & \begin{tabular}[c]{@{}l@{}}Dataset contains handwritten characters. \\
+Using characters $+,-,/,=$ as operators.\end{tabular} & $52$ ($7$ for operators) & $3$ & $85\%$ \\ \hline
+$16*16$ & \begin{tabular}[c]{@{}l@{}}Dataset contains computer fonts. \\
+Using characters $+,-,/,=$ as operators.\end{tabular} & $1013$ ($7$ for operators) & $3$ & $62\%$ \\ \hline
+$16*16$ & \begin{tabular}[c]{@{}l@{}}Dataset contains computer fonts. \\
+Using characters $A,S,D,E$ as operators.\end{tabular} & $916$ & $100$ & $96\%$ \\ \hline
+$32*32$ & \begin{tabular}[c]{@{}l@{}}Dataset contains handwritten characters. \\
+Using characters $+,-,/,=$ as operators.\end{tabular} & $3$ & $3$ & $81\%$ \\ \hline
+$32*32$ & \begin{tabular}[c]{@{}l@{}}Dataset contains handwritten characters. \\
+Using characters $+,-,/,=$ as operators.\end{tabular} & $52$ ($7$ for operators) & $3$ & $89\%$ \\ \hline
+$32*32$ & \begin{tabular}[c]{@{}l@{}}Dataset contains computer fonts. \\
+Using characters $+,-,/,=$ as operators.\end{tabular} & $1013$ ($7$ for operators) & $3$ & $77\%$ \\ \hline
+$32*32$ & \begin{tabular}[c]{@{}l@{}}Dataset contains computer fonts. \\
+Using characters $A,S,D,E$ as operators.\end{tabular} & $916$ & $100$ & $98\%$ \\ \hline
+\end{tabular}%
+}
+\caption{\label{table} Results from training}
+
 \end{table}
-
-%\caption{\label{table} Results from training}
-
-%\end{tabular}
 
 \section*{Discussion and conclusion}
 \addcontentsline{toc}{section}{Discussion and conclusion}
