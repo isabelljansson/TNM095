@@ -53,9 +53,19 @@
 \pagestyle{fancy}
 \fancyhf{}
 \setlength\headheight{15pt}
-\fancyhead[L]{jonbo665@student.liu.se, isaja187@student.liu.se}
+\fancyhead[L]{Jonathan Bosson, Isabell Jansson}
 \fancyhead[R]{Link\"oping University}
 \fancyfoot[R]{Page \thepage\ of \pageref{LastPage}}
+
+
+\fancypagestyle{firststyle}
+{
+  \renewcommand{\headrulewidth}{0pt}%
+   \fancyhf{}
+   \fancyfoot[L]{Jonathan Bosson, Media Technology Student at Link\"oping University, Sweden. jonbo665@student.liu.se \\
+   Isabell Jansson, Media Technology Student at Link\"oping University, Sweden. isaja187@student.liu.se}
+}
+
 %-------------------------------------------------------------------------------
 % TITLE PAGE
 %-------------------------------------------------------------------------------
@@ -66,16 +76,21 @@
 		\\ [1.0cm]
 		\normalsize \textbf{\uppercase{Through Neural Network and Optical Character Recognition}}
 		\HRule{2pt} \\ [0.5cm]
-		\normalsize \today \vspace*{5\baselineskip}}
+		\normalsize{TNM095 - Artificial Intelligence for Interactive Media \\ [1.0cm]}
+    \normalsize \today \vspace*{5\baselineskip}\thispagestyle{firststyle}}
+
 
 \date{}
 
+
+
 \author{
 		Jonathan Bosson \\ 
-		Isabell Jansson \\
+		Isabell Jansson \\ [0.5cm]
 		Link\"oping University }
 
 \maketitle
+
 
 
 \section*{Abstract}
@@ -141,9 +156,9 @@ An activation function is then used to transform the $u_{i}$ into the output $y(
 The project contains three parts:
 
 \begin{itemize}  
-\item \textbf{Preporcessing} -  Each image in the dataset contains a character which is converted into a string of bits by thresholding the image. The image is then cropped and rescaled before storing the result into a text file and which is used in the following step. 
+\item \textbf{Preprocessing} -  Each image in the dataset contains a character which is converted into a string of bits by thresholding the image. The image is then cropped and rescaled before storing the result into a text file and which is used in the following step. 
 \item \textbf{Training} - The processed dataset is used as the input for the training of the MLP-neural network. The result is exported and used in the application.
-\item \textbf{Application} - The application uses a web camera to register characters. The neural network is guessing the classification of the characters in each frame. If the registered characters define a valid mathematical expression, the application is calculating the result of the expression and dispose it to the user. \ldots 
+\item \textbf{Application} - The application uses a web camera to register characters. The neural network guesses the classification of the characters in each frame. If the registered characters define a valid mathematical expression, the application is calculates the result of the expression and dispose it to the user.
 \end{itemize}
 
 
@@ -273,7 +288,7 @@ Using characters $A,S,D,E$ as operators.\end{tabular} & $916$ & $100$ & $98\%$ \
 The biggest contributing factors for errors in the character predictions are the quality of the webcam as well as the light settings in the room when the application is running. The better the original picture the better will the recognition work. In the development of this application was five years old integrated laptop webcams used in a gloomy lit room. This results in more noise in an order of magnitude, making Otsu's threshold filter not enough to remove all outlines but the contours from the characters. Slight orientation differences between the camera and the paper on which the characters are written can also affect prediction accuracy in a big way. Another issue is the MLP neural network as it has troubles identifying this many different characters, especially since many of them share a lot of similarities. A idea could be to change the number of hidden layers, however it can be difficult to find the optimal number. If the data is linearly separable then hidden layers are not needed, and even if not is the improved performance negligible in most applications. 
 \newline
 \newline
-The MLP uses a backpropagation algorithm to train, as is the standard for any supervised learning. There is an application developed by Alistar Dobke and Mark Mann which is also using a feed forward MLP neural network but trained with a conjugate scaled gradient backpropagation. The application is developed for mobile Android devices and is a simple calculator as it only contains the addition and subtraction operators and no variable. Though the application is simpler than the application developed in this project, it seems to have achieved more reliable results \cite{app}, however it were unable to prove since the application was unresponsive. Using another training set could also make handwritten character predictions more reliable. This was clear after seeing the improvement by swapping from a small dataset of handwritten characters to a much larger one with computer written characters. The result from the test set will vary depending on the size of the training set. If a small training set is used, it is likely that the training set will not be a good representation of the real data set. Since if the training set is small, a wrong classification has a bigger impact on the result which is the case when using only three testing images. A $2\%$ increase were achieved in accuracy using $32*32$ patch size over $16*16$, although that improvement is rather small compared to the improvement between $16*16$ and $8*8$ patch sizes. Using $32*32$ is four times as computationally heavy as $16*16$, however since the training is only done once and not tied to the output application is that irrelevant to the user. 
+The MLP uses a backpropagation algorithm to train, as is the standard for any supervised learning. There is an application developed by Alistar Dobke and Mark Mann which is also using a feed forward MLP neural network but trained with a conjugate scaled gradient backpropagation. The application is developed for mobile Android devices and is a simple calculator as it only contains the addition and subtraction operators and no variable. Although the application is simpler than the application developed in this project, it claims to have achieved more reliable results \cite{app}. However, this could not be proven since the application was unresponsive when tested. Using another training set could also make handwritten character predictions more reliable. This was clear after seeing the improvement by swapping from a small dataset of handwritten characters to a much larger one with computer written characters. The result from the test set will vary depending on the size of the training set. If a small training set is used, it is likely that the training set will not be a good representation of the real data set. Since if the training set is small, a wrong classification has a bigger impact on the result which is the case when using only three testing images. A $2\%$ increase were achieved in accuracy using $32*32$ patch size over $16*16$, although that improvement is rather small compared to the improvement between $16*16$ and $8*8$ patch sizes. Using $32*32$ is four times as computationally heavy as $16*16$, however since the training is only done once and not tied to the output application is that irrelevant to the user. 
 \newline
 \newline
 The prediction of the MLP neural network can be improved in numerous different ways, mainly targeted at the training techniques. For best results, it is recommended to have a high quality camera and a well lit room when using the application. The application can effectively find characters on an even surface and, as long as the prediction is correct, has no trouble calculating the given expression.
